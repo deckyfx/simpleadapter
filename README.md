@@ -1,0 +1,2 @@
+# simpleadapter
+Adapterview made easy
