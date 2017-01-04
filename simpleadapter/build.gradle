@@ -30,16 +30,16 @@ version = versionName
 
 def groupName = group
 def artifactName = 'simpleadapter'
-def siteUrl = 'https://github.com/deckyfx/simpleadapter'   // Homepage URL of the library
-def gitUrl = 'https://github.com/deckyfx/simpleadapter.git' // Git repository URL
+def siteUrl = 'https://github.com/deckyfx/' + artifactName   // Homepage URL of the library
+def gitUrl = 'https://github.com/deckyfx/' + artifactName + '.git' // Git repository URL
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 25
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
 
@@ -54,6 +54,11 @@ android {
     }
     packagingOptions {
         exclude 'META-INF/LICENSE'
+    }
+    android {
+        lintOptions {
+            abortOnError false
+        }
     }
 }
 
@@ -78,20 +83,19 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.8.4'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.8.4'
 
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:appcompat-v7:23.0.0'
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:recyclerview-v7:25.0.0'
-    compile 'com.android.support:recyclerview-v7:25.0.0'
+    compile 'com.android.support:recyclerview-v7:23.0.0'
+    compile 'com.android.support:recyclerview-v7:23.0.0'
 }
 
 // Disable this to upload as JAR
-/*
 install {
     repositories.mavenInstaller {
         // This generates POM.xml with proper parameters
         pom {
             project {
-                packaging 'jar' // or aar
+                packaging 'aar' // or jar
 
                 // Add your description here
                 name artifactName
@@ -121,7 +125,7 @@ install {
         }
     }
 }
-*/
+
 if (project.hasProperty("android")) { // Android libraries
     task sourcesJar(type: Jar) {
         classifier = 'sources'
@@ -168,7 +172,7 @@ bintray {
         publicDownloadNumbers = true
         attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
 
-        githubRepo = 'deckyfx/simpleadapter' //Optional Github repository
+        githubRepo = 'deckyfx/' + artifactName //Optional Github repository
         githubReleaseNotesFile = 'README.md' //Optional Github readme file
 
         dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
@@ -195,7 +199,7 @@ bintray {
 android.libraryVariants.all { variant ->
     def name = variant.buildType.name
     if (name.equals(com.android.builder.core.BuilderConstants.DEBUG)) {
-       // return;
+        // return;
     }
     def task = project.tasks.create "jar${name.capitalize()}", Jar
     task.dependsOn variant.javaCompile

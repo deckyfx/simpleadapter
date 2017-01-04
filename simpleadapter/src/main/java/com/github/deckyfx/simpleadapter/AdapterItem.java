@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.util.JSONPObject;
@@ -107,18 +108,37 @@ public class AdapterItem {
     }
 
     @JsonIgnore
-    public <T extends AdapterItem> T parseJackson(String text) throws IOException {
+    public final <T extends AdapterItem> T parseJackson(String text) throws IOException {
         return (T) this.mObjectMapper.readValue(text, this.getClass());
     }
 
     @JsonIgnore
-    public static String parseDateAsString(String format, Date date) {
+    public final <T extends AdapterItem> T mergeJackson(String text) throws IOException {
+        ObjectReader updater = this.mObjectMapper.readerForUpdating(this.getClass());
+        return (T) updater.readValue(text);
+    }
+
+    @JsonIgnore
+    public final static <T extends AdapterItem> T ParseJackson(String text, Class<? extends AdapterItem> klas) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return (T) objectMapper.readValue(text, klas);
+    }
+
+    @JsonIgnore
+    public final static <T extends AdapterItem> T MergeJackson(String text, Class<? extends AdapterItem> klas) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectReader updater = objectMapper.readerForUpdating(klas);
+        return (T) updater.readValue(text);
+    }
+
+    @JsonIgnore
+    public final static String parseDateAsString(String format, Date date) {
         DateFormat df = new SimpleDateFormat(format, Locale.ENGLISH);
         return df.format(date);
     }
 
     @JsonIgnore
-    public static Date parseStringAsDate(String format, String dateString) {
+    public final static Date parseStringAsDate(String format, String dateString) {
         DateFormat df = new SimpleDateFormat(format, Locale.ENGLISH);
         try {
             return df.parse(dateString);

@@ -26,17 +26,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         ArrayList a = new ArrayList();
         ArrayList<String> b = new ArrayList<String>();
@@ -53,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         TestItem h = g.getItem(0);
         AdapterDataSet<TestItem> i = c.find("0");
         g.notifyDataSetChanged();
-        ListView listview = (ListView) this.findViewById(R.id.listview);
+        ListView listview = (ListView) this.findViewById(R.id.listView);
         listview.setAdapter(g);
 
         ExpandableAdapterDataSet<AdapterGroupItem, TestItem> o = new ExpandableAdapterDataSet<AdapterGroupItem, TestItem>();
