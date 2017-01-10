@@ -11,8 +11,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.util.JSONPObject;
@@ -119,6 +121,17 @@ public class AdapterItem {
     }
 
     @JsonIgnore
+    public final String toString() {
+        String result = "";
+        try {
+            result = this.mObjectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @JsonIgnore
     public final static <T extends AdapterItem> T ParseJackson(String text, Class<? extends AdapterItem> klas) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return (T) objectMapper.readValue(text, klas);
@@ -129,6 +142,18 @@ public class AdapterItem {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectReader updater = objectMapper.readerForUpdating(klas);
         return (T) updater.readValue(text);
+    }
+
+    @JsonIgnore
+    public final static String ToString(Object obj) {
+        String result = "";
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            result = objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @JsonIgnore

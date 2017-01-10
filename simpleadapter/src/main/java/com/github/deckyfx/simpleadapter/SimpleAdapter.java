@@ -109,6 +109,7 @@ public class SimpleAdapter<E extends AdapterItem> extends android.widget.ArrayAd
     public View getView(int position, View convertView, ViewGroup parent) {
         AdapterItem.ViewHolder viewHolder;
         if (convertView == null) {
+            convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(mItemLayout, null);
             viewHolder = this.initViewHolder(convertView, this.mViewHolderClass, this.mItemLayout);
             convertView.setTag(viewHolder);
         } else {
