@@ -68,18 +68,17 @@ public class AdapterItem {
     public void setName(String n) { _name = n; }
     @JsonIgnore
     public String getName() { return _name; }
-
     */
 
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
     public Date _date;
 
-    public String text = "";
-    public String text2 = "";
+    public String text                              = "";
+    public String text2                             = "";
     public Object data;
 
     @JsonIgnore
-    private final ObjectMapper mObjectMapper;
+    protected final ObjectMapper mObjectMapper      = new ObjectMapper();
 
     @JsonIgnore
     public AdapterItem() {
@@ -106,7 +105,6 @@ public class AdapterItem {
         this.text = text;
         this.text2 = text2;
         this.data = data;
-        this.mObjectMapper = new ObjectMapper();
     }
 
     @JsonIgnore
@@ -158,13 +156,23 @@ public class AdapterItem {
 
     @JsonIgnore
     public final static String parseDateAsString(String format, Date date) {
-        DateFormat df = new SimpleDateFormat(format, Locale.ENGLISH);
-        return df.format(date);
+        return parseDateAsString(format, date, Locale.getDefault());
     }
 
     @JsonIgnore
     public final static Date parseStringAsDate(String format, String dateString) {
-        DateFormat df = new SimpleDateFormat(format, Locale.ENGLISH);
+        return parseStringAsDate(format, dateString, Locale.getDefault());
+    }
+
+    @JsonIgnore
+    public final static String parseDateAsString(String format, Date date, Locale locale) {
+        DateFormat df = new SimpleDateFormat(format, locale);
+        return df.format(date);
+    }
+
+    @JsonIgnore
+    public final static Date parseStringAsDate(String format, String dateString, Locale locale) {
+        DateFormat df = new SimpleDateFormat(format, locale);
         try {
             return df.parse(dateString);
         } catch (ParseException e) {
@@ -180,11 +188,12 @@ public class AdapterItem {
     }
 
     public static class ViewHolder {
-        private View mConvertView;
-        private TextView mTextView1, mTextView2;
-        private CheckedTextView mCheckedTextView1, mCheckedTextView2;
-        private ClickListener mClickListener;
-        private TouchListener mTouchListener;
+        protected View mConvertView;
+        protected TextView mTextView1, mTextView2;
+        protected CheckedTextView mCheckedTextView1, mCheckedTextView2;
+        protected ClickListener mClickListener;
+        protected TouchListener mTouchListener;
+        protected int mLayoutTag;
 
         public ViewHolder() {
 
@@ -251,12 +260,12 @@ public class AdapterItem {
     }
 
     public static class RecycleViewHolder extends RecyclerView.ViewHolder {
-        private View mConvertView;
-        private TextView mTextView1, mTextView2;
-        private CheckedTextView mCheckedTextView1, mCheckedTextView2;
-        private ClickListener mClickListener;
-        private TouchListener mTouchListener;
-        private int mLayoutTag;
+        protected View mConvertView;
+        protected TextView mTextView1, mTextView2;
+        protected CheckedTextView mCheckedTextView1, mCheckedTextView2;
+        protected ClickListener mClickListener;
+        protected TouchListener mTouchListener;
+        protected int mLayoutTag;
 
         public RecycleViewHolder() {
             super(null);
