@@ -142,6 +142,12 @@ public class AdapterItem {
         return (T) updater.readValue(text);
     }
 
+    public final static ObjectReader getObjectReader(Class<?> klas){
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectReader reader = objectMapper.readerFor(klas);
+        return reader;
+    }
+
     @JsonIgnore
     public final static String ToString(Object obj) {
         String result = "";

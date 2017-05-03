@@ -27,6 +27,7 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends AdapterItem
     private Filter mFilter;
     private AnimationSet mGroupScrollAnimation, mChildScrollAnimation;
     private Object mTag;
+    private int mGroupCountMargin, mChildrenCountMargin;
 
     public ExpandableAdapter(Context ctx, ExpandableAdapterDataSet<E, T> groupList) {
         this(ctx, groupList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_EXPANDABLE_LIST_ITEM_1,
@@ -64,6 +65,7 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends AdapterItem
         this.mChildLayout = childLayout;
         this.mGroupViewHolderClass = groupViewHolderClass;
         this.mChildViewHolderClass = childViewHolderClass;
+        this.mGroupCountMargin = this.mChildrenCountMargin = 0;
         this.mCtx = ctx;
     }
 
@@ -125,14 +127,36 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends AdapterItem
         return viewHolder;
     }
 
+    public void setGroupCountMargin(int countMargin){
+        if (countMargin <= 0) {
+            countMargin = 0;
+        }
+        this.mGroupCountMargin = countMargin;
+    }
+
+    public void setChildrenCountMargin(int countMargin){
+        if (countMargin <= 0) {
+            countMargin = 0;
+        }
+        this.mChildrenCountMargin = countMargin;
+    }
+
     @Override
     public int getGroupCount() {
-        return this.mGroupList.size();
+        if (this.mGroupList == null) {
+            return 0;
+        }
+        int count = this.mGroupList.size();
+        return count > 0 ? count - this.mGroupCountMargin : count;
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.mGroupList.get(groupPosition).childrens.size();
+        if (this.mGroupList == null) {
+            return 0;
+        }
+        int count = this.mGroupList.get(groupPosition).childrens.size();
+        return count > 0 ? count - this.mChildrenCountMargin : count;
     }
 
     @Override

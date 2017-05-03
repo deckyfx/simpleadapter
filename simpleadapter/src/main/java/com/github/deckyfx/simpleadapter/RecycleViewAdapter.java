@@ -27,6 +27,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<AdapterItem.Recycle
     private TouchListener mTouchListener;
     private Filter mFilter;
     private AnimationSet mScrollAnimation;
+    private int mCountMargin;
 
     public RecycleViewAdapter(Context ctx, AdapterDataSet<AdapterItem> itemsList) {
         this(ctx, itemsList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, AdapterItem.RecycleViewHolder.class);
@@ -44,6 +45,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<AdapterItem.Recycle
         this.mItemsList = itemsList;
         this.mItemLayout = itemLayout;
         this.mViewHolderClass = viewHolderClass;
+        this.mCountMargin = 0;
         this.mCtx = ctx;
     }
 
@@ -121,10 +123,21 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<AdapterItem.Recycle
         }
     }
 
+    public void setCountMargin(int countMargin){
+        if (countMargin <= 0) {
+            countMargin = 0;
+        }
+        this.mCountMargin = countMargin;
+    }
+
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mItemsList.size();
+        if (this.mItemsList == null) {
+            return 0;
+        }
+        int count = this.mItemsList.size();
+        return count > 0 ? count - this.mCountMargin : count;
     }
 
     public interface ClickListener extends AdapterItem.RecycleViewHolder.ClickListener {

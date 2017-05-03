@@ -26,6 +26,7 @@ public class SimpleAdapter<E extends AdapterItem> extends android.widget.ArrayAd
     private Filter mFilter;
     private AnimationSet mScrollAnimation;
     private Object mTag;
+    private int mCountMargin;
 
     public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList) {
         this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, AdapterItem.ViewHolder.class);
@@ -45,6 +46,7 @@ public class SimpleAdapter<E extends AdapterItem> extends android.widget.ArrayAd
         this.mItemLayout = itemLayout;
         this.mCtx = ctx;
         this.mViewHolderClass = viewHolderClass;
+        this.mCountMargin = 0;
     }
 
     public AnimationSet getDefaultScrollAnimation() {
@@ -103,6 +105,22 @@ public class SimpleAdapter<E extends AdapterItem> extends android.widget.ArrayAd
             x.printStackTrace();
         }
         return viewHolder;
+    }
+
+    public void setCountMargin(int countMargin){
+        if (countMargin <= 0) {
+            countMargin = 0;
+        }
+        this.mCountMargin = countMargin;
+    }
+
+    @Override
+    public int getCount(){
+        if (this.mItemsList == null) {
+            return 0;
+        }
+        int count = this.mItemsList.size();
+        return count > 0 ? count - this.mCountMargin : count;
     }
 
     @Override
