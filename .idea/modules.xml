@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/simpleadapter.iml" filepath="$PROJECT_DIR$/simpleadapter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/simpleadapter-kotlin/simpleadapter-kotlin.iml" filepath="$PROJECT_DIR$/simpleadapter-kotlin/simpleadapter-kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/simpleadapter/simpleadapter-simpleadapter.iml" filepath="$PROJECT_DIR$/simpleadapter/simpleadapter-simpleadapter.iml" />
     </modules>
   </component>

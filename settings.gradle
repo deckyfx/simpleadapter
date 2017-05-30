@@ -1,1 +1,1 @@
-include ':app', ':simpleadapter'
+include ':app', ':simpleadapter', ':simpleadapter-kotlin'
