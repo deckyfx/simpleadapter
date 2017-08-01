@@ -32,6 +32,10 @@ dependencies {
     compile "com.android.support:support-v4:+"
 
     testCompile 'junit:junit:4.12'
+
     //compile project(path: ':simpleadapter-kotlin')
-    compile project(path: ':simpleadapter')
+    //compile project(path: ':simpleadapter')
+    compile 'com.github.deckyfx:simpleadapter:0.14'
+
+    compile 'com.google.code.gson:gson:2.8.1'
 }

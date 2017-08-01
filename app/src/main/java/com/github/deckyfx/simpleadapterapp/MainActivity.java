@@ -1,23 +1,18 @@
 package com.github.deckyfx.simpleadapterapp;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.Filter;
 import android.widget.ListView;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.deckyfx.simpleadapter.AdapterDataSet;
 import com.github.deckyfx.simpleadapter.AdapterGroupItem;
 import com.github.deckyfx.simpleadapter.AdapterItem;
+import com.github.deckyfx.simpleadapter.BaseItem;
 import com.github.deckyfx.simpleadapter.ExpandableAdapter;
 import com.github.deckyfx.simpleadapter.ExpandableAdapterDataSet;
 import com.github.deckyfx.simpleadapter.SimpleAdapter;
+import com.google.gson.JsonSyntaxException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         d.add(new AdapterItem("B"));
         d.add(new AdapterItem("C"));
         TestItem e = c.get(0);
-        AdapterItem f = d.get(0);
+        BaseItem f = d.get(0);
         c.size();
         SimpleAdapter<TestItem> g = new SimpleAdapter<TestItem>(this, c);
         TestItem h = g.getItem(0);
@@ -52,13 +47,10 @@ public class MainActivity extends AppCompatActivity {
         AdapterGroupItem<TestItem> j = o.get(0);
         //j.childrens.get(0);
 
-        ObjectMapper mapper = new ObjectMapper();
+        String jsontext = "{\"text\":\"Some text\",\"text2\":\"Some text 2\",\"value\":1234,\"data\":true,\"innerdata\":\"Inner\",\"inneritem\":{\"lol\":1203},\"list\":[{\"lol\":0},{\"lol\":1},{\"lol\":2}],\"_date\":\"2016-11-10\"}";
         try {
-            String jsontext = "{\"text\":\"Some text\",\"text2\":\"Some text 2\",\"value\":1234,\"data\":true,\"innerdata\":\"Inner\",\"inneritem\":{\"lol\":1203},\"list\":[{\"lol\":0},{\"lol\":1},{\"lol\":2}],\"_date\":\"2016-11-10\"}";
-            TestItem item = mapper.readValue(jsontext, TestItem.class);
-            String s = item.text;
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        } catch (JsonSyntaxException err) {
+            TestItem.fromJson(jsontext, TestItem.class);
         }
     }
 
