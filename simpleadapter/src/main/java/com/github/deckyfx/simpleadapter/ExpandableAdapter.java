@@ -2,7 +2,6 @@ package com.github.deckyfx.simpleadapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -17,13 +16,14 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public class ExpandableAdapter<E extends AdapterGroupItem, T extends AdapterItem> extends BaseExpandableListAdapter implements Serializable, Filterable {
+public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> extends BaseExpandableListAdapter implements Serializable, Filterable {
     private ExpandableAdapterDataSet<E, T> mGroupList, mBackupGroupList;
     private int mGroupLayout, mChildLayout;
     private Context mCtx;
     private Class<? extends AdapterItem.ViewHolder> mGroupViewHolderClass, mChildViewHolderClass;
-    private ClickListener mClickListener;
-    private TouchListener mTouchListener;
+    private SimpleAdapter.ClickListener mClickListener;
+    private SimpleAdapter.TouchListener mTouchListener;
+    private ViewBindListener mViewBindListener;
     private Filter mFilter;
     private AnimationSet mGroupScrollAnimation, mChildScrollAnimation;
     private Object mTag;
@@ -211,6 +211,7 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends AdapterItem
             AdapterItem item = this.getGroup(groupPosition);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, groupPosition, item);
+                this.mViewBindListener.onViewBind(groupPosition, -1);
             }
         }
         if (this.mGroupScrollAnimation != null) {
@@ -243,9 +244,10 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends AdapterItem
             viewHolder.setTouchListener(this.mTouchListener);
         }
         if (groupPosition < this.getGroupCount() && childPosition < this.getChildrenCount(groupPosition)) {
-            AdapterItem item = this.getChild(groupPosition, childPosition);
+            BaseItem item = this.getChild(groupPosition, childPosition);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, groupPosition, childPosition, item);
+                this.mViewBindListener.onViewBind(groupPosition, childPosition);
             }
         }
         if (this.mChildScrollAnimation != null) {
@@ -275,30 +277,24 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends AdapterItem
     @Override
     public Filter getFilter() {
         if (this.mFilter == null) {
-            this.mFilter = new CustomFilter();
+            this.mFilter = new ExpandableAdapterFilter();
         }
         return this.mFilter;
     }
 
-    public void setClickListener(ClickListener listener) {
+    public void setClickListener(SimpleAdapter.ClickListener listener) {
         this.mClickListener = listener;
     }
 
-    public void setTouchListener(TouchListener listener) {
+    public void setTouchListener(SimpleAdapter.TouchListener listener) {
         this.mTouchListener = listener;
     }
 
-    public interface ClickListener extends AdapterItem.ViewHolder.ClickListener {
-        @Override
-        public void onClick(View view);
+    public interface ViewBindListener {
+        public boolean onViewBind(int groupPosition, int childPosition);
     }
 
-    public interface TouchListener extends AdapterItem.ViewHolder.TouchListener {
-        @Override
-        public boolean onTouch(View view, MotionEvent mv);
-    }
-
-    private class CustomFilter extends Filter {
+    private class ExpandableAdapterFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             constraint = constraint.toString().toLowerCase();

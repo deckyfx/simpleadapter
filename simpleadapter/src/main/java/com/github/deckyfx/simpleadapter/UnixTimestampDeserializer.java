@@ -1,24 +1,26 @@
 package com.github.deckyfx.simpleadapter;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
-/**
- * Created by decky on 1/4/17.
- */
-public class UnixTimestampDeserializer extends JsonDeserializer<Date> {
+public class UnixTimestampDeserializer extends TypeAdapter<Date> {
+    @Override
+    public void write(JsonWriter out, Date value) throws IOException {
+        if (value == null)
+            out.nullValue();
+        else
+            out.value(value.getTime() / 1000);
+    }
 
     @Override
-    public Date deserialize(JsonParser parser, DeserializationContext context)
-            throws IOException, JsonProcessingException {
-        String unixTimestamp = parser.getText().trim();
-        return new Date(TimeUnit.SECONDS.toMillis(Long.valueOf(unixTimestamp)));
+    public Date read(JsonReader in) throws IOException {
+        if (in != null)
+            return new Date(in.nextLong() / 1000);
+        else
+            return null;
     }
 }

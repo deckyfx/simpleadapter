@@ -10,7 +10,7 @@ import java.util.RandomAccess;
  */
 
 
-public class AdapterDataSet<E extends AdapterItem> extends ArrayList<E> implements List<E>, RandomAccess, Cloneable, Serializable {
+public class AdapterDataSet<E extends BaseItem> extends ArrayList<E> implements List<E>, RandomAccess, Cloneable, Serializable {
     public AdapterDataSet<E> find(CharSequence constraint) {
         AdapterDataSet<E> results = new AdapterDataSet<E>();
         for (int i = 0; i < this.size(); i++) {

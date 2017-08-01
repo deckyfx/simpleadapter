@@ -3,7 +3,6 @@ package com.github.deckyfx.simpleadapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -11,37 +10,40 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
 import android.widget.Filter;
+import android.widget.Filterable;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by decky on 8/3/16.
  */
-public class RecycleViewAdapter extends RecyclerView.Adapter<AdapterItem.RecycleViewHolder> {
-    private AdapterDataSet<AdapterItem> mItemsList, mOriginalList;
+public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<AdapterItem.RecycleViewHolder>  implements Serializable, Filterable {
+    private AdapterDataSet<E> mItemsList, mOriginalList, mBackupList;
     private int mItemLayout;
     private Context mCtx;
     private Class<? extends AdapterItem.RecycleViewHolder> mViewHolderClass;
-    private ClickListener mClickListener;
-    private TouchListener mTouchListener;
+    private SimpleAdapter.ClickListener mClickListener;
+    private SimpleAdapter.TouchListener mTouchListener;
+    private SimpleAdapter.ViewBindListener mViewBindListener;
     private Filter mFilter;
     private AnimationSet mScrollAnimation;
     private int mCountMargin;
 
-    public RecycleViewAdapter(Context ctx, AdapterDataSet<AdapterItem> itemsList) {
+    public RecycleAdapter(Context ctx, AdapterDataSet<E> itemsList) {
         this(ctx, itemsList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, AdapterItem.RecycleViewHolder.class);
     }
 
-    public RecycleViewAdapter(Context ctx, AdapterDataSet<AdapterItem> itemsList, int itemLayout) {
+    public RecycleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout) {
         this(ctx, itemsList, itemLayout, AdapterItem.RecycleViewHolder.class);
     }
 
-    public RecycleViewAdapter(Context ctx, AdapterDataSet<AdapterItem> itemsList, int itemLayout, AdapterItem.RecycleViewHolder viewHolderInstance) {
+    public RecycleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AdapterItem.RecycleViewHolder viewHolderInstance) {
         this(ctx, itemsList, itemLayout, viewHolderInstance.getClass());
     }
 
-    public RecycleViewAdapter(Context ctx, AdapterDataSet<AdapterItem> itemsList, int itemLayout, Class<? extends AdapterItem.RecycleViewHolder> viewHolderClass) {
+    public RecycleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AdapterItem.RecycleViewHolder> viewHolderClass) {
         this.mItemsList = itemsList;
         this.mItemLayout = itemLayout;
         this.mViewHolderClass = viewHolderClass;
@@ -67,16 +69,11 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<AdapterItem.Recycle
         this.mScrollAnimation = scrollAnimation;
     }
 
-    public void resetOriginalList() {
-        this.mOriginalList = new AdapterDataSet<AdapterItem>();
-        this.mOriginalList.addAll(this.mItemsList);
-    }
-
-    public void setClickListener(ClickListener listener) {
+    public void setClickListener(SimpleAdapter.ClickListener listener) {
         this.mClickListener = listener;
     }
 
-    public void setTouchListener(TouchListener listener) {
+    public void setTouchListener(SimpleAdapter.TouchListener listener) {
         this.mTouchListener = listener;
     }
 
@@ -116,9 +113,10 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<AdapterItem.Recycle
             viewHolder.setTouchListener(this.mTouchListener);
         }
         if (position < this.mItemsList.size()) {
-            AdapterItem item = this.mItemsList.get(position);
+            BaseItem item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, position, item);
+                this.mViewBindListener.onViewBind(position);
             }
         }
     }
@@ -140,14 +138,65 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<AdapterItem.Recycle
         return count > 0 ? count - this.mCountMargin : count;
     }
 
-    public interface ClickListener extends AdapterItem.RecycleViewHolder.ClickListener {
-        @Override
-        public void onClick(View view);
+    public void resetOriginalList() {
+        if (this.mBackupList == null) {
+            return;
+        }
+        this.mItemsList = new AdapterDataSet<E>();
+        this.mItemsList.addAll(this.mBackupList);
     }
 
-    public interface TouchListener extends AdapterItem.RecycleViewHolder.TouchListener {
+    public void backupList() {
+        this.mBackupList = new AdapterDataSet<E>();
+        this.mBackupList.addAll(this.mItemsList);
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (this.mFilter == null) {
+            this.mFilter = new AdapterFilter();
+        }
+        return this.mFilter;
+    }
+
+    public class AdapterFilter extends Filter {
         @Override
-        public boolean onTouch(View view, MotionEvent mv);
+        protected FilterResults performFiltering(CharSequence constraint) {
+            if (mBackupList == null) {
+                backupList();
+            }
+            FilterResults result = new FilterResults();
+            // If the constraint (search string/pattern) is null
+            // or its length is 0, i.e., its empty then
+            // we just set the `values` property to the
+            // original contacts list which contains all of them
+            if (constraint == null || constraint.length() == 0) {
+                synchronized (this) {
+                    result.values = mBackupList;
+                    result.count = mBackupList.size();
+                }
+            } else {
+                synchronized (this) {
+                    AdapterDataSet<E> filteredItems = mBackupList.find(constraint);
+                    result.count = filteredItems.size();
+                    result.values = filteredItems;
+                }
+            }
+            return result;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if (results.count > 0) {
+                AdapterDataSet<E> result_list = (AdapterDataSet<E>) results.values;
+                mItemsList.removeAll(mItemsList);
+                notifyDataSetChanged();
+                // clear();
+                mItemsList.addAll(result_list);
+                notifyDataSetChanged();
+            }
+        }
     }
 }
 

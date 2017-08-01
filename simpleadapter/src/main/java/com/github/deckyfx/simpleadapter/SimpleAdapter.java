@@ -16,13 +16,14 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public class SimpleAdapter<E extends AdapterItem> extends android.widget.ArrayAdapter implements Serializable, Filterable {
+public class SimpleAdapter<E extends BaseItem> extends android.widget.ArrayAdapter implements Serializable, Filterable {
     private AdapterDataSet<E> mItemsList, mBackupList;
     private int mItemLayout;
     private Context mCtx;
     private Class mViewHolderClass;
     private ClickListener mClickListener;
     private TouchListener mTouchListener;
+    private ViewBindListener mViewBindListener;
     private Filter mFilter;
     private AnimationSet mScrollAnimation;
     private Object mTag;
@@ -148,9 +149,10 @@ public class SimpleAdapter<E extends AdapterItem> extends android.widget.ArrayAd
             viewHolder.setTouchListener(this.mTouchListener);
         }
         if (position < this.mItemsList.size()) {
-            AdapterItem item = this.mItemsList.get(position);
+            BaseItem item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, position, item);
+                this.mViewBindListener.onViewBind(position);
             }
         }
         if (this.mScrollAnimation != null) {
@@ -198,6 +200,10 @@ public class SimpleAdapter<E extends AdapterItem> extends android.widget.ArrayAd
         public boolean onTouch(View view, MotionEvent mv);
     }
 
+    public interface ViewBindListener {
+        public boolean onViewBind(int position);
+    }
+
     public static final class DEFAULT_LIST_VIEW {
         public static final int SIMPLE_LIST_ITEM_1 = android.R.layout.simple_list_item_1;
         public static final int SIMPLE_LIST_ITEM_2 = android.R.layout.simple_list_item_2;
@@ -214,7 +220,7 @@ public class SimpleAdapter<E extends AdapterItem> extends android.widget.ArrayAd
         public static final int SIMPLE_SPINNER_DROPDOWN_ITEM = android.R.layout.simple_spinner_dropdown_item;
     }
 
-    private class AdapterFilter extends Filter {
+    public class AdapterFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             if (mBackupList == null) {
