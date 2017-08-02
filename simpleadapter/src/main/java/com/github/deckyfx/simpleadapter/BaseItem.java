@@ -21,15 +21,15 @@ public class BaseItem {
             .registerTypeAdapter(Date.class, new DateTimeSerializer())
             .create();
 
-    private void setGSON(Gson gson) {
+    public void setGSON(Gson gson) {
         GSON = gson;
     }
 
-    protected final <T extends BaseItem> T fromJson(String json) throws JsonSyntaxException {
+    public final <T extends BaseItem> T fromJson(String json) throws JsonSyntaxException {
         return (T) GSON.fromJson(json, this.getClass());
     }
 
-    protected final String toJson() throws JsonSyntaxException  {
+    public final String toJson() throws JsonSyntaxException  {
         return GSON.toJson(this);
     }
 
