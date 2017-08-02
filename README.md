@@ -23,56 +23,28 @@ dependencies {
 
 ## Sample Code
 
-Create class represent your list item
-```java
-public class Book extends BaseItem {
-	public String title;    
-    public String author;
-    
-    public Book(String t, String a){
-    	title = a;
-        author = a;
-    }
-    
-    public static class ViewHolder extends AdapterItem.ViewHolder {
-    	/* Declare your view items here */
-    	private TextView titleText, authorText;
-        
-        public ViewHolder(View convertView) {
-            /* Initialize your view items here */
-            titleText = convertView.findViewById(/* your view item id */);
-            authorText = convertView.findViewById(/* your view item id */);
-        }
-    }
-    
-    public void setupView(Context ctx, int position, BaseItem itemobject) {
-      	/* Setup your view items here */
-        Book item = (Book) itemobject;
-        titleText.setText(item.title);
-        authorText.setText(item.author);
-    }
-}
-```
 
 And in your listview activity
 ```java
 ...
-private AdapterDataSet<Book> dataset = new AdapterDataSet<Book>();
-private SimpleAdapter<Book> adapter = new Adapter<Book>();
+private AdapterDataSet<AdapterItem> dataset = new AdapterDataSet<AdapterItem>();
+private SimpleAdapter<AdapterItem> adapter = new Adapter<AdapterItem>();
 ...
 
 ```
 
 ```java
 ...
-adapter = new SimpleAdapter<Book>(this, dataset, R.layout.itemview, Book.ViewHolder);
+adapter = new SimpleAdapter<AdapterItem>(this, dataset);
 listview.setAdapter(adapter);
-dataset.add(new Book("Dragon Ball", "Akira Toriyama"));
-dataset.add(new Book("Doraemon", "Fujiko F Fujio"));
+dataset.add(new AdapterItem("Item 1"));
+dataset.add(new AdapterItem("Item 2"));
 adapter.notifyDataSetChange();
 ...
 
 ```
+
+More sample is [here]
 
 ## Feature:
 
@@ -82,4 +54,3 @@ adapter.notifyDataSetChange();
  * Using Gson to parse JSON
  * Parse date from string / viceversa
  * Listen to item view onclick, ontouch, and onbindview
- * 

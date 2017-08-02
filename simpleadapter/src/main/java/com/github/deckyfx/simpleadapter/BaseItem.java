@@ -6,6 +6,7 @@ package com.github.deckyfx.simpleadapter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -24,19 +25,19 @@ public class BaseItem {
         GSON = gson;
     }
 
-    protected final <T extends BaseItem> T fromJson(String json) {
+    protected final <T extends BaseItem> T fromJson(String json) throws JsonSyntaxException {
         return (T) GSON.fromJson(json, this.getClass());
     }
 
-    protected final String toJson() {
+    protected final String toJson() throws JsonSyntaxException  {
         return GSON.toJson(this);
     }
 
-    public final static <T extends BaseItem> T fromJson(String json, Class<? extends BaseItem> klas){
+    public final static <T extends BaseItem> T fromJson(String json, Class<? extends BaseItem> klas) throws JsonSyntaxException {
         return (T) GSON.fromJson(json, klas);
     }
 
-    public final static String toJson(Object source){
+    public final static String toJson(Object source) throws JsonSyntaxException {
         return GSON.toJson(source);
     }
 
@@ -44,7 +45,7 @@ public class BaseItem {
         return dateToString(format, date, Locale.getDefault());
     }
 
-    public final static Date stringToDate(String format, String dateString) {
+    public final static Date stringToDate(String format, String dateString) throws ParseException {
         return stringToDate(format, dateString, Locale.getDefault());
     }
 
@@ -53,7 +54,7 @@ public class BaseItem {
         return df.format(date);
     }
 
-    public final static Date stringToDate(String format, String dateString, Locale locale) {
+    public final static Date stringToDate(String format, String dateString, Locale locale) throws ParseException {
         DateFormat df = new SimpleDateFormat(format, locale);
         try {
             return df.parse(dateString);
