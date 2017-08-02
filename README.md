@@ -29,7 +29,7 @@ And in your listview activity
 ```java
 ...
 private AdapterDataSet<AdapterItem> dataset = new AdapterDataSet<AdapterItem>();
-private SimpleAdapter<AdapterItem> adapter = new Adapter<AdapterItem>();
+private SimpleAdapter<AdapterItem> adapter;
 ...
 
 ```
