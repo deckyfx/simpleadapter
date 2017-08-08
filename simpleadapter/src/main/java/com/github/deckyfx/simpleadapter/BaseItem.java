@@ -25,6 +25,10 @@ public class BaseItem {
         GSON = gson;
     }
 
+    public Gson getGson() {
+        return GSON;
+    }
+
     public final <T extends BaseItem> T fromJson(String json) throws JsonSyntaxException {
         return (T) GSON.fromJson(json, this.getClass());
     }
