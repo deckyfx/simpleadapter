@@ -18,7 +18,7 @@ Add the dependency
 ```gradle
 dependencies {
 	compile 'com.google.code.gson:gson:2.8.1'
-	compile 'com.github.deckyfx:simpleadapter:0.18@aar'
+	compile 'com.github.deckyfx:simpleadapter:0.19@aar'
 }
 ```
 
