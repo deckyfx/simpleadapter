@@ -33,12 +33,20 @@ public class BaseItem {
         return (T) GSON.fromJson(json, this.getClass());
     }
 
-    public final String toJson() throws JsonSyntaxException  {
-        return GSON.toJson(this);
-    }
-
     public final static <T extends BaseItem> T fromJson(String json, Class<? extends BaseItem> klas) throws JsonSyntaxException {
         return (T) GSON.fromJson(json, klas);
+    }
+
+    public final static <T extends BaseItem> T[] fromJsonArray(String json, Class<? extends BaseItem[]> klas) throws JsonSyntaxException {
+        return (T[]) GSON.fromJson(json, klas);
+    }
+
+    public final static <T extends BaseItem> T fromJson(String json, BaseItem obj) throws JsonSyntaxException {
+        return (T) GSON.fromJson(json, obj.getClass());
+    }
+
+    public final static <T extends BaseItem> T[] fromJsonArray(String json, BaseItem... obj) throws JsonSyntaxException {
+        return (T[]) GSON.fromJson(json, obj.getClass());
     }
 
     public final static String toJson(Object source) throws JsonSyntaxException {
