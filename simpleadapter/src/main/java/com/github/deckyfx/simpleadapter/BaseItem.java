@@ -21,11 +21,11 @@ public class BaseItem {
             .registerTypeAdapter(Date.class, new DateTimeSerializer())
             .create();
 
-    public void setGSON(Gson gson) {
+    public static void setGSON(Gson gson) {
         GSON = gson;
     }
 
-    public Gson getGson() {
+    public static Gson getGson() {
         return GSON;
     }
 
