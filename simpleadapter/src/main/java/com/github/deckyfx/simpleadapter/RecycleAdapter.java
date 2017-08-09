@@ -69,12 +69,16 @@ public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ada
         this.mScrollAnimation = scrollAnimation;
     }
 
-    public void setClickListener(SimpleAdapter.ClickListener listener) {
+    public void setOnClickListener(SimpleAdapter.ClickListener listener) {
         this.mClickListener = listener;
     }
 
-    public void setTouchListener(SimpleAdapter.TouchListener listener) {
+    public void setOnTouchListener(SimpleAdapter.TouchListener listener) {
         this.mTouchListener = listener;
+    }
+
+    public void setOnViewBindListener(SimpleAdapter.ViewBindListener listener) {
+        this.mViewBindListener = listener;
     }
 
     // Create new views (invoked by the layout manager)
@@ -107,10 +111,10 @@ public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ada
     public void onBindViewHolder(AdapterItem.RecycleViewHolder viewHolder, int position) {
         viewHolder.setLayoutTag(position);
         if (this.mClickListener != null) {
-            viewHolder.setClickListener(this.mClickListener);
+            viewHolder.setOnClickListener(this.mClickListener);
         }
         if (this.mTouchListener != null) {
-            viewHolder.setTouchListener(this.mTouchListener);
+            viewHolder.setOnTouchListener(this.mTouchListener);
         }
         if (position < this.mItemsList.size()) {
             BaseItem item = this.mItemsList.get(position);

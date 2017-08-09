@@ -202,10 +202,10 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
             }
         }
         if (this.mClickListener != null) {
-            viewHolder.setClickListener(this.mClickListener);
+            viewHolder.setOnClickListener(this.mClickListener);
         }
         if (this.mTouchListener != null) {
-            viewHolder.setTouchListener(this.mTouchListener);
+            viewHolder.setOnTouchListener(this.mTouchListener);
         }
         if (groupPosition < this.getGroupCount()) {
             AdapterItem item = this.getGroup(groupPosition);
@@ -238,10 +238,10 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
             }
         }
         if (this.mClickListener != null) {
-            viewHolder.setClickListener(this.mClickListener);
+            viewHolder.setOnClickListener(this.mClickListener);
         }
         if (this.mTouchListener != null) {
-            viewHolder.setTouchListener(this.mTouchListener);
+            viewHolder.setOnTouchListener(this.mTouchListener);
         }
         if (groupPosition < this.getGroupCount() && childPosition < this.getChildrenCount(groupPosition)) {
             BaseItem item = this.getChild(groupPosition, childPosition);
@@ -282,12 +282,16 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
         return this.mFilter;
     }
 
-    public void setClickListener(SimpleAdapter.ClickListener listener) {
+    public void setOnClickListener(SimpleAdapter.ClickListener listener) {
         this.mClickListener = listener;
     }
 
-    public void setTouchListener(SimpleAdapter.TouchListener listener) {
+    public void setOnTouchListener(SimpleAdapter.TouchListener listener) {
         this.mTouchListener = listener;
+    }
+
+    public void setOnViewBindListener(ViewBindListener listener) {
+        this.mViewBindListener = listener;
     }
 
     public interface ViewBindListener {

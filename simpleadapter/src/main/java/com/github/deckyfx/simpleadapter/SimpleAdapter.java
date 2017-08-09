@@ -143,10 +143,10 @@ public class SimpleAdapter<E extends BaseItem> extends android.widget.ArrayAdapt
             }
         }
         if (this.mClickListener != null) {
-            viewHolder.setClickListener(this.mClickListener);
+            viewHolder.setOnClickListener(this.mClickListener);
         }
         if (this.mTouchListener != null) {
-            viewHolder.setTouchListener(this.mTouchListener);
+            viewHolder.setOnTouchListener(this.mTouchListener);
         }
         if (position < this.mItemsList.size()) {
             BaseItem item = this.mItemsList.get(position);
@@ -182,12 +182,16 @@ public class SimpleAdapter<E extends BaseItem> extends android.widget.ArrayAdapt
         return this.mFilter;
     }
 
-    public void setClickListener(ClickListener listener) {
+    public void setOnClickListener(ClickListener listener) {
         this.mClickListener = listener;
     }
 
-    public void setTouchListener(TouchListener listener) {
+    public void setOnTouchListener(TouchListener listener) {
         this.mTouchListener = listener;
+    }
+
+    public void setOnViewBindListener(ViewBindListener listener) {
+        this.mViewBindListener = listener;
     }
 
     public interface ClickListener extends AdapterItem.ViewHolder.ClickListener {

@@ -93,11 +93,11 @@ public class AdapterItem extends BaseItem{
             }
         }
 
-        public void setClickListener(ClickListener clickListener) {
+        public void setOnClickListener(ClickListener clickListener) {
             this.mClickListener = clickListener;
         }
 
-        public void setTouchListener(TouchListener touchListener) {
+        public void setOnTouchListener(TouchListener touchListener) {
             this.mTouchListener = touchListener;
         }
 
@@ -159,11 +159,11 @@ public class AdapterItem extends BaseItem{
             }
         }
 
-        public void setClickListener(AdapterItem.ViewHolder.ClickListener clickListener) {
+        public void setOnClickListener(AdapterItem.ViewHolder.ClickListener clickListener) {
             this.mClickListener = clickListener;
         }
 
-        public void setTouchListener(AdapterItem.ViewHolder.TouchListener touchListener) {
+        public void setOnTouchListener(AdapterItem.ViewHolder.TouchListener touchListener) {
             this.mTouchListener = touchListener;
         }
 
