@@ -152,7 +152,7 @@ public class SimpleAdapter<E extends BaseItem> extends android.widget.ArrayAdapt
             BaseItem item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, position, item);
-                this.mViewBindListener.onViewBind(position);
+                this.mViewBindListener.onViewBind(this, position);
             }
         }
         if (this.mScrollAnimation != null) {
@@ -205,7 +205,7 @@ public class SimpleAdapter<E extends BaseItem> extends android.widget.ArrayAdapt
     }
 
     public interface ViewBindListener {
-        public boolean onViewBind(int position);
+        public boolean onViewBind(SimpleAdapter adapter, int position);
     }
 
     public static final class DEFAULT_LIST_VIEW {

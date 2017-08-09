@@ -26,7 +26,7 @@ public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ada
     private Class<? extends AdapterItem.RecycleViewHolder> mViewHolderClass;
     private SimpleAdapter.ClickListener mClickListener;
     private SimpleAdapter.TouchListener mTouchListener;
-    private SimpleAdapter.ViewBindListener mViewBindListener;
+    private ViewBindListener mViewBindListener;
     private Filter mFilter;
     private AnimationSet mScrollAnimation;
     private int mCountMargin;
@@ -77,7 +77,7 @@ public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ada
         this.mTouchListener = listener;
     }
 
-    public void setOnViewBindListener(SimpleAdapter.ViewBindListener listener) {
+    public void setOnViewBindListener(ViewBindListener listener) {
         this.mViewBindListener = listener;
     }
 
@@ -120,7 +120,7 @@ public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ada
             BaseItem item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, position, item);
-                this.mViewBindListener.onViewBind(position);
+                this.mViewBindListener.onViewBind(this, position);
             }
         }
     }
@@ -153,6 +153,10 @@ public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ada
     public void backupList() {
         this.mBackupList = new AdapterDataSet<E>();
         this.mBackupList.addAll(this.mItemsList);
+    }
+
+    public interface ViewBindListener {
+        public boolean onViewBind(RecycleAdapter adapter, int position);
     }
 
     @Override
