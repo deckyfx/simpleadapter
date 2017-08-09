@@ -49,7 +49,11 @@ public class BaseItem {
         return (T[]) GSON.fromJson(json, obj.getClass());
     }
 
-    public final static String toJson(Object source) throws JsonSyntaxException {
+    public final String toJson() throws JsonSyntaxException {
+        return GSON.toJson(this);
+    }
+
+    public final static String toJson(BaseItem source) throws JsonSyntaxException {
         return GSON.toJson(source);
     }
 
