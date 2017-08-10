@@ -103,7 +103,9 @@ public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ada
             BaseItem item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, position, item);
-                this.mViewBindListener.onViewBind(this, position);
+                if (this.mViewBindListener != null) {
+                    this.mViewBindListener.onViewBind(this, position);
+                }
             }
         }
     }

@@ -220,7 +220,9 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
             AdapterItem item = this.getGroup(groupPosition);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, groupPosition, item);
-                this.mViewBindListener.onViewBind(this, groupPosition, -1);
+                if (this.mViewBindListener != null) {
+                    this.mViewBindListener.onViewBind(this, groupPosition, -1);
+                }
             }
         }
         if (this.mGroupScrollAnimation != null) {
@@ -256,7 +258,9 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
             BaseItem item = this.getChild(groupPosition, childPosition);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, groupPosition, childPosition, item);
-                this.mViewBindListener.onViewBind(this, groupPosition, childPosition);
+                if (this.mViewBindListener != null) {
+                    this.mViewBindListener.onViewBind(this, groupPosition, childPosition);
+                }
             }
         }
         if (this.mChildScrollAnimation != null) {

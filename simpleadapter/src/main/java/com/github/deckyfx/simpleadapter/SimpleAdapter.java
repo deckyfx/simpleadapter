@@ -138,7 +138,9 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
             BaseItem item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, position, item);
-                this.mViewBindListener.onViewBind(this, position);
+                if (this.mViewBindListener != null) {
+                    this.mViewBindListener.onViewBind(this, position);
+                }
             }
         }
         if (this.mScrollAnimation != null) {
