@@ -11,6 +11,7 @@ import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ProgressBar;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -28,8 +29,8 @@ public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ada
     private SimpleAdapter.TouchListener mTouchListener;
     private ViewBindListener mViewBindListener;
     private Filter mFilter;
-    private AnimationSet mScrollAnimation;
     private int mCountMargin;
+    private AnimationSet mScrollAnimation;
 
     public RecycleAdapter(Context ctx, AdapterDataSet<E> itemsList) {
         this(ctx, itemsList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, AdapterItem.RecycleViewHolder.class);
@@ -49,24 +50,6 @@ public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ada
         this.mViewHolderClass = viewHolderClass;
         this.mCountMargin = 0;
         this.mCtx = ctx;
-    }
-
-    public AnimationSet getDefaultScrollAnimation() {
-        AnimationSet scrollAnimation = new AnimationSet(true);
-        Animation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setDuration(800);
-        scrollAnimation.addAnimation(animation);
-        animation = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f
-        );
-        animation.setDuration(600);
-        scrollAnimation.addAnimation(animation);
-        return scrollAnimation;
-    }
-
-    public void setGroupScrollAnimation(AnimationSet scrollAnimation) {
-        this.mScrollAnimation = scrollAnimation;
     }
 
     public void setOnClickListener(SimpleAdapter.ClickListener listener) {
@@ -153,6 +136,28 @@ public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ada
     public void backupList() {
         this.mBackupList = new AdapterDataSet<E>();
         this.mBackupList.addAll(this.mItemsList);
+    }
+
+    public AnimationSet createDefaultScrollAnimation() {
+        AnimationSet scrollAnimation = new AnimationSet(true);
+        Animation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setDuration(800);
+        scrollAnimation.addAnimation(animation);
+        animation = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f
+        );
+        animation.setDuration(600);
+        scrollAnimation.addAnimation(animation);
+        return scrollAnimation;
+    }
+
+    public AnimationSet getScrollAnimation() {
+        return this.mScrollAnimation;
+    }
+
+    public void setScrollAnimation(AnimationSet scrollAnimation) {
+        this.mScrollAnimation = scrollAnimation;
     }
 
     public interface ViewBindListener {

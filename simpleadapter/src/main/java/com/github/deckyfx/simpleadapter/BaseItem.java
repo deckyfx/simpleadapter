@@ -17,7 +17,6 @@ import java.util.Locale;
 public class BaseItem {
     private static Gson GSON = new GsonBuilder()
             .serializeNulls()
-            .registerTypeAdapter(Date.class,new UnixTimestampDeserializer())
             .registerTypeAdapter(Date.class, new DateTimeSerializer())
             .create();
 

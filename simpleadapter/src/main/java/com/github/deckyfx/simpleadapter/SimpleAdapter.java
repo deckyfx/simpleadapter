@@ -9,14 +9,17 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ProgressBar;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public class SimpleAdapter<E extends BaseItem> extends android.widget.ArrayAdapter implements Serializable, Filterable {
+public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements Serializable, Filterable {
     private AdapterDataSet<E> mItemsList, mBackupList;
     private int mItemLayout;
     private Context mCtx;
@@ -25,9 +28,9 @@ public class SimpleAdapter<E extends BaseItem> extends android.widget.ArrayAdapt
     private TouchListener mTouchListener;
     private ViewBindListener mViewBindListener;
     private Filter mFilter;
-    private AnimationSet mScrollAnimation;
     private Object mTag;
     private int mCountMargin;
+    private AnimationSet mScrollAnimation;
 
     public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList) {
         this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, AdapterItem.ViewHolder.class);
@@ -48,24 +51,6 @@ public class SimpleAdapter<E extends BaseItem> extends android.widget.ArrayAdapt
         this.mCtx = ctx;
         this.mViewHolderClass = viewHolderClass;
         this.mCountMargin = 0;
-    }
-
-    public AnimationSet getDefaultScrollAnimation() {
-        AnimationSet scrollAnimation = new AnimationSet(true);
-        Animation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setDuration(800);
-        scrollAnimation.addAnimation(animation);
-        animation = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f
-        );
-        animation.setDuration(600);
-        scrollAnimation.addAnimation(animation);
-        return scrollAnimation;
-    }
-
-    public void setGroupScrollAnimation(AnimationSet scrollAnimation) {
-        this.mScrollAnimation = scrollAnimation;
     }
 
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
@@ -121,7 +106,8 @@ public class SimpleAdapter<E extends BaseItem> extends android.widget.ArrayAdapt
             return 0;
         }
         int count = this.mItemsList.size();
-        return count > 0 ? count - this.mCountMargin : count;
+        count = (count > 0)? (count - this.mCountMargin) : count;
+        return count;
     }
 
     @Override
@@ -172,6 +158,28 @@ public class SimpleAdapter<E extends BaseItem> extends android.widget.ArrayAdapt
     public void backupList() {
         this.mBackupList = new AdapterDataSet<E>();
         this.mBackupList.addAll(this.mItemsList);
+    }
+
+    public AnimationSet createDefaultScrollAnimation() {
+        AnimationSet scrollAnimation = new AnimationSet(true);
+        Animation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setDuration(800);
+        scrollAnimation.addAnimation(animation);
+        animation = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f
+        );
+        animation.setDuration(600);
+        scrollAnimation.addAnimation(animation);
+        return scrollAnimation;
+    }
+
+    public AnimationSet getScrollAnimation() {
+        return this.mScrollAnimation;
+    }
+
+    public void setScrollAnimation(AnimationSet scrollAnimation) {
+        this.mScrollAnimation = scrollAnimation;
     }
 
     @Override

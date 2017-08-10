@@ -19,15 +19,23 @@ import java.util.Locale;
 public class DateTimeSerializer implements JsonDeserializer<Date> {
     private static final String[] DATE_FORMATS = new String[] {
             "yyyy-MM-dd HH:mm:ss",
-            "yyyy-MM-dd"
+            "yyyy-MM-dd",
+            "timestamp"
     };
 
     @Override
     public Date deserialize(JsonElement jsonElement, Type typeOF, JsonDeserializationContext context) throws JsonParseException {
         for (String format : DATE_FORMATS) {
-            try {
-                return new SimpleDateFormat(format, Locale.US).parse(jsonElement.getAsString());
-            } catch (ParseException e) {
+            if (format.equalsIgnoreCase("timestamp")) {
+                try {
+                    new Date(jsonElement.getAsLong());
+                } catch (Exception   e) {
+                }
+            } else {
+                try {
+                    return new SimpleDateFormat(format, Locale.US).parse(jsonElement.getAsString());
+                } catch (ParseException e) {
+                }
             }
         }
         throw new JsonParseException("Unparseable date: \"" + jsonElement.getAsString()
