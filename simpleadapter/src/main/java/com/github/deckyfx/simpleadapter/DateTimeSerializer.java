@@ -28,7 +28,7 @@ public class DateTimeSerializer implements JsonDeserializer<Date> {
         for (String format : DATE_FORMATS) {
             if (format.equalsIgnoreCase("timestamp")) {
                 try {
-                    new Date(jsonElement.getAsLong());
+                    return new Date(jsonElement.getAsLong());
                 } catch (Exception   e) {
                 }
             } else {
