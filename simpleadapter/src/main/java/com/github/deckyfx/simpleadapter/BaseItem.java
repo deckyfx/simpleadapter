@@ -17,6 +17,7 @@ import java.util.Locale;
 public class BaseItem {
     private static Gson GSON = new GsonBuilder()
             .serializeNulls()
+            .setDateFormat("yyyy MM DD HH:mm:ss ")
             .registerTypeAdapter(Date.class, new DateTimeSerializer())
             .create();
 
