@@ -19,6 +19,8 @@ Add the dependency
 dependencies {
 	compile 'com.google.code.gson:gson:2.8.1'
 	compile 'com.github.deckyfx:simpleadapter:0.25@aar'
+	// or if always get the latest
+	compile 'com.github.deckyfx:simpleadapter:master-SNAPSHOT'	
 }
 ```
 
