@@ -4,8 +4,6 @@ package com.github.deckyfx.simpleadapter;
  * Created by decky on 8/1/17.
  */
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import java.text.DateFormat;
@@ -15,46 +13,43 @@ import java.util.Date;
 import java.util.Locale;
 
 public class BaseItem {
-    private static Gson GSON = new GsonBuilder()
-            .serializeNulls()
-            .setDateFormat("yyyy MM DD HH:mm:ss ")
-            .registerTypeAdapter(Date.class, new DateTimeSerializer())
-            .create();
+    private static JSONParserAdapter Parser;
 
-    public static void setGSON(Gson gson) {
-        GSON = gson;
+    public static void setJSONParser(JSONParserAdapter parser) {
+        Parser = parser;
+        Parser.init();
     }
 
-    public static Gson getGson() {
-        return GSON;
+    public static JSONParserAdapter getJSONParser() {
+        return Parser;
     }
 
     public final <T extends BaseItem> T fromJson(String json) throws JsonSyntaxException {
-        return (T) GSON.fromJson(json, this.getClass());
+        return (T) Parser.fromJson(json, this.getClass());
     }
 
     public final static <T extends BaseItem> T fromJson(String json, Class<? extends BaseItem> klas) throws JsonSyntaxException {
-        return (T) GSON.fromJson(json, klas);
+        return (T) Parser.fromJson(json, klas);
     }
 
     public final static <T extends BaseItem> T[] fromJsonArray(String json, Class<? extends BaseItem[]> klas) throws JsonSyntaxException {
-        return (T[]) GSON.fromJson(json, klas);
+        return (T[]) Parser.fromJsonArray(json, klas);
     }
 
     public final static <T extends BaseItem> T fromJson(String json, BaseItem obj) throws JsonSyntaxException {
-        return (T) GSON.fromJson(json, obj.getClass());
+        return (T) Parser.fromJson(json, obj.getClass());
     }
 
     public final static <T extends BaseItem> T[] fromJsonArray(String json, BaseItem... obj) throws JsonSyntaxException {
-        return (T[]) GSON.fromJson(json, obj.getClass());
+        return (T[]) Parser.fromJsonArray(json, obj.getClass());
     }
 
     public final String toJson() throws JsonSyntaxException {
-        return GSON.toJson(this);
+        return Parser.toJson(this);
     }
 
     public final static String toJson(BaseItem source) throws JsonSyntaxException {
-        return GSON.toJson(source);
+        return Parser.toJson(source);
     }
 
     public final static String dateToString(String format, Date date) {

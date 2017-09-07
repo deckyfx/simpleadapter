@@ -27,9 +27,38 @@ dependencies {
 ## Sample Code
 
 
+extends **JSONParserAdapter** to your liking
+```java
+
+class MyParser extends JSONParserAdapter{
+    @Override
+    public void init() {
+        // init the parser
+    }
+
+    @Override
+    public Object fromJson(String json, Class<? extends BaseItem> klas) {
+        //return parser deserialize result;
+    }
+
+    @Override
+    public Object fromJsonArray(String json, Class<? extends BaseItem[]> klas) {
+        //return parser deserialize result;
+    }
+
+    @Override
+    public String toJson(BaseItem baseItem) {
+        //return parser serialize result;
+    }
+}
+```
+
 And in your listview activity
 ```java
 ...
+MyParser parser = New MyParser();
+BaseItem.setJSONParser(parser);
+
 private AdapterDataSet<AdapterItem> dataset = new AdapterDataSet<AdapterItem>();
 private SimpleAdapter<AdapterItem> adapter;
 ...
