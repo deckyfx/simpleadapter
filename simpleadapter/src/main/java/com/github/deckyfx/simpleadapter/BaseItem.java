@@ -3,9 +3,6 @@ package com.github.deckyfx.simpleadapter;
 /**
  * Created by decky on 8/1/17.
  */
-
-import com.google.gson.JsonSyntaxException;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,31 +21,31 @@ public class BaseItem {
         return Parser;
     }
 
-    public final <T extends BaseItem> T fromJson(String json) throws JsonSyntaxException {
+    public final <T extends BaseItem> T fromJson(String json) throws Exception {
         return (T) Parser.fromJson(json, this.getClass());
     }
 
-    public final static <T extends BaseItem> T fromJson(String json, Class<? extends BaseItem> klas) throws JsonSyntaxException {
+    public final static <T extends BaseItem> T fromJson(String json, Class<? extends BaseItem> klas) throws Exception {
         return (T) Parser.fromJson(json, klas);
     }
 
-    public final static <T extends BaseItem> T[] fromJsonArray(String json, Class<? extends BaseItem[]> klas) throws JsonSyntaxException {
+    public final static <T extends BaseItem> T[] fromJsonArray(String json, Class<? extends BaseItem[]> klas) throws Exception {
         return (T[]) Parser.fromJsonArray(json, klas);
     }
 
-    public final static <T extends BaseItem> T fromJson(String json, BaseItem obj) throws JsonSyntaxException {
+    public final static <T extends BaseItem> T fromJson(String json, BaseItem obj) throws Exception {
         return (T) Parser.fromJson(json, obj.getClass());
     }
 
-    public final static <T extends BaseItem> T[] fromJsonArray(String json, BaseItem... obj) throws JsonSyntaxException {
+    public final static <T extends BaseItem> T[] fromJsonArray(String json, BaseItem... obj) throws Exception {
         return (T[]) Parser.fromJsonArray(json, obj.getClass());
     }
 
-    public final String toJson() throws JsonSyntaxException {
+    public final String toJson() throws Exception {
         return Parser.toJson(this);
     }
 
-    public final static String toJson(BaseItem source) throws JsonSyntaxException {
+    public final static String toJson(BaseItem source) throws Exception {
         return Parser.toJson(source);
     }
 
