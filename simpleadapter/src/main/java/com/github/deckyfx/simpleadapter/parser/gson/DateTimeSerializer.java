@@ -1,3 +1,5 @@
+package com.github.deckyfx.simpleadapter.parser.gson;
+
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

@@ -11,7 +11,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ProgressBar;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;

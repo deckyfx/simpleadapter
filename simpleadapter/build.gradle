@@ -54,8 +54,15 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile 'com.android.support:appcompat-v7:24.0.0-beta1'
-    compile 'com.android.support:recyclerview-v7:24.0.0-beta1'
+    compileOnly 'com.android.support:appcompat-v7:24.0.0-beta1'
+    compileOnly 'com.android.support:recyclerview-v7:24.0.0-beta1'
+
+    compileOnly 'com.google.code.gson:gson:2.8.1'
+    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.8.4'
+    compileOnly 'com.fasterxml.jackson.core:jackson-core:2.8.4'
+    compileOnly 'com.fasterxml.jackson.core:jackson-annotations:2.8.4'
+
+
     testCompile 'junit:junit:4.12'
 }
 

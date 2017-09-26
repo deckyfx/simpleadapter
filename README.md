@@ -17,10 +17,14 @@ Add the dependency
 
 ```gradle
 dependencies {
+	compile 'com.github.deckyfx:simpleadapter:-SNAPSHOT'
+	// include the parser, gson	
 	compile 'com.google.code.gson:gson:2.8.1'
-	compile 'com.github.deckyfx:simpleadapter:0.25@aar'
-	// or if always get the latest
-	compile 'com.github.deckyfx:simpleadapter:-SNAPSHOT'	
+	// if you prefer jakson
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.4'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.8.4'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.4'
+
 }
 ```
 
