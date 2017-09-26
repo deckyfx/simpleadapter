@@ -21,6 +21,10 @@ public class GSONParser extends JSONParserAdapter {
                 .create();
     }
 
+    public Gson getGSON() {
+        return this.GSON;
+    }
+
     @Override
     public Object fromJson(String json, Class<? extends BaseItem> klas) {
         return this.GSON.fromJson(json, klas);
