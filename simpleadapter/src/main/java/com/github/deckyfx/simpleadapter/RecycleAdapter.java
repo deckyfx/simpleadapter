@@ -19,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Created by decky on 8/3/16.
  */
-public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<AdapterItem.RecycleViewHolder>  implements Serializable, Filterable {
+public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<AdapterItem.RecycleViewHolder> implements Serializable, Filterable {
     private AdapterDataSet<E> mItemsList, mOriginalList, mBackupList;
     private int mItemLayout;
     private Context mCtx;

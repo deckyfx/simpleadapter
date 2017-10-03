@@ -13,7 +13,6 @@ public class JaksonParser extends JSONParserAdapter {
     private ObjectMapper mObjectMapper;
 
     public JaksonParser() {
-
     }
 
     @Override

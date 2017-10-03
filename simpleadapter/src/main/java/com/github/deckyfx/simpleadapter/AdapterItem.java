@@ -125,7 +125,7 @@ public class AdapterItem extends BaseItem{
         }
 
         public RecycleViewHolder(View convertView) {
-            super(null);
+            super(convertView);
             this.mConvertView = convertView;
             this.mTextView1 = (TextView) convertView.findViewById(android.R.id.text1);
             this.mTextView2 = (TextView) convertView.findViewById(android.R.id.text2);

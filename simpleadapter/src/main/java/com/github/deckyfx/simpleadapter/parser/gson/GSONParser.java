@@ -10,7 +10,8 @@ import java.util.Date;
 public class GSONParser extends JSONParserAdapter {
     private Gson GSON;
 
-    public GSONParser() {}
+    public GSONParser() {
+    }
 
     @Override
     public void init() {
