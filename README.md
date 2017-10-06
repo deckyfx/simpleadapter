@@ -20,6 +20,8 @@ dependencies {
 	compile 'com.github.deckyfx:simpleadapter:-SNAPSHOT'
 	// include the parser, gson	
 	compile 'com.google.code.gson:gson:2.8.1'
+	// if you prefer moshi
+	compile 'com.squareup.moshi:moshi:1.5.0'
 	// if you prefer jakson
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.4'
     compile 'com.fasterxml.jackson.core:jackson-core:2.8.4'
