@@ -72,7 +72,7 @@ public class BaseItem {
         }
     }
 
-    public boolean filter(ObjectTester<BaseItem> tester) {
+    public boolean filter(ItemTester<BaseItem> tester) {
         return true;
     }
 }

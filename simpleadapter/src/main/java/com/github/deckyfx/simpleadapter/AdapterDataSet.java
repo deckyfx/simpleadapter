@@ -12,8 +12,6 @@ import java.util.RandomAccess;
 
 
 public class AdapterDataSet<T extends BaseItem> extends ArrayList<T> implements List<T>, RandomAccess, Cloneable, Serializable {
-    private ObjectTester<T> tester;
-
     @Override
     public T get(int i) {
         return super.get(i);
@@ -24,36 +22,24 @@ public class AdapterDataSet<T extends BaseItem> extends ArrayList<T> implements 
         return super.size();
     }
 
-    public AdapterDataSet<T> find(ObjectTester<BaseItem> tester) {
-        AdapterDataSet<T> results = new AdapterDataSet<T>();
-        for (T element : this) {
-            if (element.filter(tester)) results.add(element);
-        }
-        return results;
-    }
-
-    public AdapterDataSet<T> filter(Object filter){
-        if (this.tester == null) {
-            return this;
-        }
+    public AdapterDataSet<T> filter(ItemTester.Test<T, Boolean> tester, Object object) {
         AdapterDataSet<T> result = new AdapterDataSet<T>();
         for (T element : this) {
-            if (this.tester.filter(element, filter)) {
-                result.add(element);
-            }
+            Object r_o = tester.apply(element, object, 0);
+            if (tester.apply(element, object)) result.add(element);
         }
         return result;
     }
 
-    public void sort() {
-        Collections.sort(this, this.tester);
+    public void sort(ItemTester.Compare compare) {
+        Collections.sort(this, compare);
     }
 
-    public int getType(int position){
-        return this.tester.getType(this.get(position), position);
+    public Object testAt(ItemTester.Test<T, ?> tester, int position) {
+        return tester.apply(this.get(position), position);
     }
 
-    public void setTester(ObjectTester<T> tester){
-        this.tester = tester;
+    public Object testAt(ItemTester.Test<T, ?> tester, int position, Object param) {
+        return tester.apply(this.get(position), position, param);
     }
 }

@@ -34,12 +34,12 @@ public class AdapterItem extends BaseItem{
         this.data = data;
     }
 
-    // Special method for test filter
+    // Special method for testAt filter
     public boolean testFilter(CharSequence term) {
         return this.text.toLowerCase().contains(term.toString().toLowerCase()) || this.text2.toLowerCase().contains(term.toString().toLowerCase());
     }
 
-    public static class ViewHolder {
+    public static class ViewHolder<T extends BaseItem> {
         protected View mConvertView;
         protected TextView mTextView1, mTextView2;
         protected CheckedTextView mCheckedTextView1, mCheckedTextView2;
@@ -67,11 +67,11 @@ public class AdapterItem extends BaseItem{
             }
         }
 
-        public void setupView(Context ctx, int position, BaseItem itemobject) {
+        public void setupView(Context ctx, int position, T itemobject) {
             this.setupView(ctx, position, 0, itemobject);
         }
 
-        public void setupView(Context ctx, int groupPosition, int childPosition, BaseItem itemobject) {
+        public void setupView(Context ctx, int groupPosition, int childPosition, T itemobject) {
             AdapterItem item = (AdapterItem) itemobject;
             if (item != null) {
                 if (this.mTextView1 != null) {
@@ -112,7 +112,7 @@ public class AdapterItem extends BaseItem{
         }
     }
 
-    public static class RecycleViewHolder extends RecyclerView.ViewHolder {
+    public static class RecycleViewHolder<T extends BaseItem> extends RecyclerView.ViewHolder {
         protected View mConvertView;
         protected TextView mTextView1, mTextView2;
         protected CheckedTextView mCheckedTextView1, mCheckedTextView2;
@@ -133,11 +133,11 @@ public class AdapterItem extends BaseItem{
             this.mCheckedTextView2 = (CheckedTextView) convertView.findViewById(android.R.id.text2);
         }
 
-        public void setupView(Context ctx, int position, BaseItem itemobject) {
+        public void setupView(Context ctx, int position, T itemobject) {
             this.setupView(ctx, position, 0, itemobject);
         }
 
-        public void setupView(Context ctx, int groupPosition, int childPosition, BaseItem itemobject) {
+        public void setupView(Context ctx, int groupPosition, int childPosition, T itemobject) {
             AdapterItem item = (AdapterItem) itemobject;
             if (item != null) {
                 if (this.mTextView1 != null) {

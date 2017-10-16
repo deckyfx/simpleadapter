@@ -18,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 public class SimpleAdapter<T extends BaseItem> extends ArrayAdapter<T> implements Serializable {
-    private AdapterDataSet<T> mItemsList, mBackupList;
+    private AdapterDataSet<T> mItemsList;
     private ArrayList<ViewHolderData> mViewHolders;
     private Context mCtx;
     private ClickListener mClickListener;
@@ -27,6 +27,8 @@ public class SimpleAdapter<T extends BaseItem> extends ArrayAdapter<T> implement
     private Object mTag;
     private int mCountMargin;
     private AnimationSet mScrollAnimation;
+    private ItemTester.Test<T, Integer> mTypeTester;
+    private ItemTester.Test<T, Boolean> mEnableTester;
 
     public SimpleAdapter(Context ctx, AdapterDataSet<T> itemsList) {
         this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, AdapterItem.ViewHolder.class);
@@ -99,6 +101,14 @@ public class SimpleAdapter<T extends BaseItem> extends ArrayAdapter<T> implement
         this.mViewHolders.add(new ViewHolderData(layoutId, viewHolderClass));
     }
 
+    public void setTypeTester(ItemTester.Test<T, Integer> tester) {
+        this.mTypeTester = tester;
+    }
+
+    public void setEnableTester(ItemTester.Test<T, Boolean> tester) {
+        this.mEnableTester = tester;
+    }
+
     @Override
     public int getViewTypeCount(){
         return this.mViewHolders.size();
@@ -106,7 +116,31 @@ public class SimpleAdapter<T extends BaseItem> extends ArrayAdapter<T> implement
 
     @Override
     public int getItemViewType(int position){
-        return this.mItemsList.getType(position);
+        if (this.mTypeTester == null) return 0;
+        Object r_o = this.mItemsList.testAt(this.mTypeTester, position);
+        if (r_o instanceof Integer) {
+            Integer r_i = (Integer) r_o;
+            return r_i;
+        } else {
+            throw new RuntimeException("To determine item view, Tester implementation have to return Integer value");
+        }
+    }
+
+    @Override
+    public boolean areAllItemsEnabled() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        if (this.mEnableTester == null) return true;
+        Object r_o = this.mItemsList.testAt(this.mEnableTester, position);
+        if (r_o instanceof Boolean) {
+            Boolean r_b = (Boolean) r_o;
+            return r_b;
+        } else {
+            throw new RuntimeException("To determine view enabled, Tester implementation have to return Boolean value");
+        }
     }
 
     @Override
@@ -145,7 +179,7 @@ public class SimpleAdapter<T extends BaseItem> extends ArrayAdapter<T> implement
             viewHolder.setOnTouchListener(this.mTouchListener);
         }
         if (position < this.mItemsList.size()) {
-            BaseItem item = this.mItemsList.get(position);
+            T item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, position, item);
                 if (this.mViewBindListener != null) {
@@ -157,19 +191,6 @@ public class SimpleAdapter<T extends BaseItem> extends ArrayAdapter<T> implement
             convertView.startAnimation(this.mScrollAnimation);
         }
         return convertView;
-    }
-
-    public void resetOriginalList() {
-        if (this.mBackupList == null) {
-            return;
-        }
-        this.mItemsList = new AdapterDataSet<T>();
-        this.mItemsList.addAll(this.mBackupList);
-    }
-
-    public void backupList() {
-        this.mBackupList = new AdapterDataSet<T>();
-        this.mBackupList.addAll(this.mItemsList);
     }
 
     public AnimationSet createDefaultScrollAnimation() {
@@ -237,8 +258,8 @@ public class SimpleAdapter<T extends BaseItem> extends ArrayAdapter<T> implement
     }
 
     public static class ViewHolderData {
-        private Class<? extends AdapterItem.ViewHolder> klas;
-        private int layout;
+        protected Class<? extends AdapterItem.ViewHolder> klas;
+        protected int layout;
 
         public ViewHolderData(int layoutId, @Nullable  Class<? extends AdapterItem.ViewHolder> viewHolderClass){
             if (layoutId <= 0) {
