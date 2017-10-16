@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.deckyfx.simpleadapter.BaseItem;
 import com.github.deckyfx.simpleadapter.JSONParserAdapter;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 

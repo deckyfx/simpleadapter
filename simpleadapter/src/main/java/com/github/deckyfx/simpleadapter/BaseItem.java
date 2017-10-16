@@ -72,7 +72,7 @@ public class BaseItem {
         }
     }
 
-    public boolean testFilter(CharSequence constraint) {
+    public boolean filter(ObjectTester<BaseItem> tester) {
         return true;
     }
 }

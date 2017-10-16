@@ -1,6 +1,7 @@
 package com.github.deckyfx.simpleadapter;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,45 +11,41 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
-public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements Serializable, Filterable {
-    private AdapterDataSet<E> mItemsList, mBackupList;
-    private int mItemLayout;
+public class SimpleAdapter<T extends BaseItem> extends ArrayAdapter<T> implements Serializable {
+    private AdapterDataSet<T> mItemsList, mBackupList;
+    private ArrayList<ViewHolderData> mViewHolders;
     private Context mCtx;
-    private Class mViewHolderClass;
     private ClickListener mClickListener;
     private TouchListener mTouchListener;
     private ViewBindListener mViewBindListener;
-    private Filter mFilter;
     private Object mTag;
     private int mCountMargin;
     private AnimationSet mScrollAnimation;
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList) {
+    public SimpleAdapter(Context ctx, AdapterDataSet<T> itemsList) {
         this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, AdapterItem.ViewHolder.class);
     }
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, Class<? extends AdapterItem.ViewHolder> viewHolderClass) {
+    public SimpleAdapter(Context ctx, AdapterDataSet<T> itemsList, Class<? extends AdapterItem.ViewHolder> viewHolderClass) {
         this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, viewHolderClass);
     }
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AdapterItem.ViewHolder viewHolderInstance) {
+    public SimpleAdapter(Context ctx, AdapterDataSet<T> itemsList, int itemLayout, AdapterItem.ViewHolder viewHolderInstance) {
         this(ctx, itemsList, itemLayout, viewHolderInstance.getClass());
     }
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AdapterItem.ViewHolder> viewHolderClass) {
+    public SimpleAdapter(Context ctx, AdapterDataSet<T> itemsList, int itemLayout, Class<? extends AdapterItem.ViewHolder> viewHolderClass) {
         super(ctx, itemLayout, itemsList);
         this.mItemsList = itemsList;
-        this.mItemLayout = itemLayout;
         this.mCtx = ctx;
-        this.mViewHolderClass = viewHolderClass;
         this.mCountMargin = 0;
+        this.addViewHolder(itemLayout, viewHolderClass);
     }
 
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
@@ -63,8 +60,8 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         this.mTag = tag;
     }
 
-    public E getItem(int i) {
-        return (E) this.mItemsList.get(i);
+    public T getItem(int i) {
+        return this.mItemsList.get(i);
     }
 
     private AdapterItem.ViewHolder initViewHolder(View convertView, Class<? extends AdapterItem.ViewHolder> vhClass, int fallbackLayout) {
@@ -98,6 +95,20 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         this.mCountMargin = countMargin;
     }
 
+    public void addViewHolder(int layoutId, @Nullable  Class<? extends AdapterItem.ViewHolder> viewHolderClass){
+        this.mViewHolders.add(new ViewHolderData(layoutId, viewHolderClass));
+    }
+
+    @Override
+    public int getViewTypeCount(){
+        return this.mViewHolders.size();
+    }
+
+    @Override
+    public int getItemViewType(int position){
+        return this.mItemsList.getType(position);
+    }
+
     @Override
     public int getCount(){
         if (this.mItemsList == null) {
@@ -110,10 +121,11 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolderData vhData = this.mViewHolders.get(this.getItemViewType(position));
         AdapterItem.ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(mItemLayout, null);
-            viewHolder = this.initViewHolder(convertView, this.mViewHolderClass, this.mItemLayout);
+            convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(vhData.layout, null);
+            viewHolder = this.initViewHolder(convertView, vhData.klas, vhData.layout);
             convertView.setTag(viewHolder);
         } else {
             // we've just avoided calling findViewById() on resource everytime
@@ -122,7 +134,7 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
             if (tag instanceof AdapterItem.ViewHolder) {
                 viewHolder = (AdapterItem.ViewHolder) convertView.getTag();
             } else {
-                viewHolder = this.initViewHolder(convertView, this.mViewHolderClass, this.mItemLayout);
+                viewHolder = this.initViewHolder(convertView, vhData.klas, vhData.layout);
                 convertView.setTag(viewHolder);
             }
         }
@@ -151,12 +163,12 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         if (this.mBackupList == null) {
             return;
         }
-        this.mItemsList = new AdapterDataSet<E>();
+        this.mItemsList = new AdapterDataSet<T>();
         this.mItemsList.addAll(this.mBackupList);
     }
 
     public void backupList() {
-        this.mBackupList = new AdapterDataSet<E>();
+        this.mBackupList = new AdapterDataSet<T>();
         this.mBackupList.addAll(this.mItemsList);
     }
 
@@ -180,14 +192,6 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
 
     public void setScrollAnimation(AnimationSet scrollAnimation) {
         this.mScrollAnimation = scrollAnimation;
-    }
-
-    @Override
-    public Filter getFilter() {
-        if (this.mFilter == null) {
-            this.mFilter = new AdapterFilter();
-        }
-        return this.mFilter;
     }
 
     public void setOnClickListener(ClickListener listener) {
@@ -232,43 +236,19 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         public static final int SIMPLE_SPINNER_DROPDOWN_ITEM = android.R.layout.simple_spinner_dropdown_item;
     }
 
-    public class AdapterFilter extends Filter {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            if (mBackupList == null) {
-                backupList();
-            }
-            FilterResults result = new FilterResults();
-            // If the constraint (search string/pattern) is null
-            // or its length is 0, i.e., its empty then
-            // we just set the `values` property to the
-            // original contacts list which contains all of them
-            if (constraint == null || constraint.length() == 0) {
-                synchronized (this) {
-                    result.values = mBackupList;
-                    result.count = mBackupList.size();
-                }
-            } else {
-                synchronized (this) {
-                    AdapterDataSet<E> filteredItems = mBackupList.find(constraint);
-                    result.count = filteredItems.size();
-                    result.values = filteredItems;
-                }
-            }
-            return result;
-        }
+    public static class ViewHolderData {
+        private Class<? extends AdapterItem.ViewHolder> klas;
+        private int layout;
 
-        @SuppressWarnings("unchecked")
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            if (results.count > 0) {
-                AdapterDataSet<E> result_list = (AdapterDataSet<E>) results.values;
-                mItemsList.removeAll(mItemsList);
-                notifyDataSetChanged();
-                clear();
-                mItemsList.addAll(result_list);
-                notifyDataSetInvalidated();
+        public ViewHolderData(int layoutId, @Nullable  Class<? extends AdapterItem.ViewHolder> viewHolderClass){
+            if (layoutId <= 0) {
+                layoutId = DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1;
             }
+            if (viewHolderClass == null) {
+                viewHolderClass = AdapterItem.ViewHolder.class;
+            }
+            this.layout = layoutId;
+            this.klas = viewHolderClass;
         }
     }
 }

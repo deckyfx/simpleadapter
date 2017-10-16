@@ -191,7 +191,7 @@ public class RecycleAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ada
                 }
             } else {
                 synchronized (this) {
-                    AdapterDataSet<E> filteredItems = mBackupList.find(constraint);
+                    AdapterDataSet<E> filteredItems = mBackupList.find(null);
                     result.count = filteredItems.size();
                     result.values = filteredItems;
                 }

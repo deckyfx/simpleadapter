@@ -1,6 +1,7 @@
 package com.github.deckyfx.simpleadapterapp;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 
@@ -54,10 +55,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static class TestItem extends AdapterItem {
+    public static class TestItem extends AdapterItem implements Comparable<TestItem>{
         public String innerdata = "";
         public TestInnerItem inneritem = new TestInnerItem();
         public ArrayList<TestInnerItem> list = new ArrayList<TestInnerItem>();
+
+        @Override
+        public int compareTo(@NonNull TestItem o) {
+            return 0;
+        }
     }
 
     public static class TestInnerItem extends AdapterItem {
