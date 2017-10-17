@@ -10,7 +10,7 @@ def artifactName = 'simpleadapter'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         minSdkVersion 14
@@ -50,9 +50,8 @@ configurations {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.testAt.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestCompile 'com.android.support.test:runner:1.0.1'
 
     compileOnly 'com.android.support:appcompat-v7:24.0.0-beta1'
     compileOnly 'com.android.support:recyclerview-v7:24.0.0-beta1'
