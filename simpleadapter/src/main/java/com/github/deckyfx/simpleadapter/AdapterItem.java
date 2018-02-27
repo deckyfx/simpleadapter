@@ -112,7 +112,7 @@ public class AdapterItem extends BaseItem{
         }
     }
 
-    public static class RecycleViewHolder extends RecyclerView.ViewHolder {
+    public static class RecyclerViewHolder extends RecyclerView.ViewHolder {
         protected View mConvertView;
         protected TextView mTextView1, mTextView2;
         protected CheckedTextView mCheckedTextView1, mCheckedTextView2;
@@ -120,11 +120,11 @@ public class AdapterItem extends BaseItem{
         protected AdapterItem.ViewHolder.TouchListener mTouchListener;
         protected int mLayoutTag;
 
-        public RecycleViewHolder() {
+        public RecyclerViewHolder() {
             super(null);
         }
 
-        public RecycleViewHolder(View convertView) {
+        public RecyclerViewHolder(View convertView) {
             super(convertView);
             this.mConvertView = convertView;
             this.mTextView1 = (TextView) convertView.findViewById(android.R.id.text1);

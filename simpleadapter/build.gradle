@@ -9,12 +9,12 @@ def groupName = group
 def artifactName = 'simpleadapter'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
 
@@ -49,22 +49,25 @@ configurations {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compileOnly 'com.android.support:appcompat-v7:24.0.0-beta1'
-    compileOnly 'com.android.support:recyclerview-v7:24.0.0-beta1'
+    // NOTE: test libraries
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-    compileOnly 'com.google.code.gson:gson:2.8.1'
-    compileOnly 'com.squareup.moshi:moshi:1.5.0'
-    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.8.4'
-    compileOnly 'com.fasterxml.jackson.core:jackson-core:2.8.4'
-    compileOnly 'com.fasterxml.jackson.core:jackson-annotations:2.8.4'
+    // NOTE: support libraries
+    provided "com.android.support:appcompat-v7:$android_support_version"
+    provided "com.android.support:design:$android_support_version"
+    provided "com.android.support:recyclerview-v7:$android_support_version"
+    provided "com.android.support:support-v4:$android_support_version"
 
-
-    testCompile 'junit:junit:4.12'
+    // NOTE: 3rd parties
+    provided 'com.google.code.gson:gson:2.8.2'
+    provided 'com.squareup.moshi:moshi:1.5.0'
+    provided 'com.fasterxml.jackson.core:jackson-databind:2.8.4'
+    provided 'com.fasterxml.jackson.core:jackson-core:2.8.4'
+    provided 'com.fasterxml.jackson.core:jackson-annotations:2.8.4'
 }
 
 // build a jar with source files
