@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 
-public abstract class AbstractViewHolder extends RecyclerView.ViewHolder {
+public abstract class AbstractViewHolder<T extends BaseItem> extends RecyclerView.ViewHolder {
     protected View mConvertView;
     protected ClickListener mClickListener;
     protected TouchListener mTouchListener;
@@ -22,7 +22,7 @@ public abstract class AbstractViewHolder extends RecyclerView.ViewHolder {
 
     protected abstract void initView(View itemView);
 
-    public abstract void setupView(Context ctx, int groupPosition, int itemPosition, BaseItem itemobject);
+    public abstract void setupView(Context ctx, int groupPosition, int itemPosition, T item);
 
     public void setOnClickListener(ClickListener clickListener) {
         this.mClickListener = clickListener;

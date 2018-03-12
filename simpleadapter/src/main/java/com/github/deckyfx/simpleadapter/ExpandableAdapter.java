@@ -216,7 +216,7 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
             viewHolder.setOnTouchListener(this.mTouchListener);
         }
         if (groupPosition < this.getGroupCount()) {
-            AdapterItem item = this.getGroup(groupPosition);
+            E item = this.getGroup(groupPosition);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, groupPosition, -1, item);
                 if (this.mViewBindListener != null) {
@@ -254,7 +254,7 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
             viewHolder.setOnTouchListener(this.mTouchListener);
         }
         if (groupPosition < this.getGroupCount() && childPosition < this.getChildrenCount(groupPosition)) {
-            BaseItem item = this.getChild(groupPosition, childPosition);
+            T item = this.getChild(groupPosition, childPosition);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, groupPosition, childPosition, item);
                 if (this.mViewBindListener != null) {
