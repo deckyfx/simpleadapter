@@ -59,7 +59,7 @@ class MyParser extends JSONParserAdapter{
 }
 ```
 
-And in your listview activity
+### Simple Adapter
 ```java
 ...
 MyParser parser = New MyParser();
@@ -80,6 +80,49 @@ dataset.add(new AdapterItem("Item 2"));
 adapter.notifyDataSetChange();
 ...
 
+```
+
+### Custom View
+
+
+```java
+...
+adapter = new SimpleAdapter<AdapterItem>(this, dataset, R.layout.item_layoout, ItemVH);
+listview.setAdapter(adapter);
+dataset.add(new AdapterItem("Item 1"));
+dataset.add(new AdapterItem("Item 2"));
+adapter.notifyDataSetChange();
+
+
+```
+
+```java
+private static class ItemVH<E extends AdapterItem> extends AbstractViewHolder<E> {
+
+    public ItemVH(View itemView) {
+        super(itemView);
+
+        // init your view here
+    }
+
+    @Override
+    public void setupView(Context ctx, int groupPosition, int itemPosition, AdapterItem item) {
+        // setup your view here
+    }
+
+}
+...
+
+```
+
+
+### Proguard misschief
+You need to add proguard rules
+```
+#Keep proguar to adding extra parameter to ViewHolder class
+-keepclassmembers class * extends com.github.deckyfx.simpleadapter.AbstractViewHolder {
+    public protected <init>(...);
+}
 ```
 
 More sample is [here]
