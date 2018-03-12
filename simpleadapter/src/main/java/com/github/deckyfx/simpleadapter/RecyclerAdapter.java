@@ -74,13 +74,15 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
         LayoutInflater inflater = LayoutInflater.from(context);
         // Inflate the custom layout
         View itemView = inflater.inflate(this.mItemLayout, parent, false);
-
         AbstractViewHolder viewHolder = null;
         Constructor<? extends AbstractViewHolder> ctor = null;
         try {
             ctor = this.mViewHolderClass.getDeclaredConstructor(View.class);
             ctor.setAccessible(true);
             viewHolder = ctor.newInstance(itemView);
+            if (viewHolder == null) {
+                throw new Error("Failed to initiate View Holder " + this.mViewHolderClass.getCanonicalName());
+            }
         } catch (NoSuchMethodException x) {
             x.printStackTrace();
         } catch (InstantiationException x) {

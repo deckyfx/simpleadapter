@@ -11,10 +11,6 @@ public abstract class AbstractViewHolder<T extends BaseItem> extends RecyclerVie
     protected TouchListener mTouchListener;
     protected int mLayoutTag;
 
-    public AbstractViewHolder() {
-        super(null);
-    }
-
     public AbstractViewHolder(View itemView) {
         super(itemView);
         this.initView(itemView);
