@@ -82,6 +82,9 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
             ctor = vhClass.getDeclaredConstructor(View.class);
             ctor.setAccessible(true);
             viewHolder = ctor.newInstance(convertView);
+            if (viewHolder == null) {
+                throw new Error("Failed to initiate View Holder " + this.mViewHolderClass.getCanonicalName());
+            }
         } catch (NoSuchMethodException x) {
             x.printStackTrace();
         } catch (InstantiationException x) {

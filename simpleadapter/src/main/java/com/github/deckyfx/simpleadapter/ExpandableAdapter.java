@@ -93,6 +93,9 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
             ctor = vhClass.getDeclaredConstructor(View.class);
             ctor.setAccessible(true);
             viewHolder = ctor.newInstance(convertView);
+            if (viewHolder == null) {
+                throw new Error("Failed to initiate View Holder " + vhClass.getCanonicalName());
+            }
         } catch (NoSuchMethodException x) {
             x.printStackTrace();
         } catch (InstantiationException x) {

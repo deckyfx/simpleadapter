@@ -13,10 +13,7 @@ public abstract class AbstractViewHolder<T extends BaseItem> extends RecyclerVie
 
     public AbstractViewHolder(View itemView) {
         super(itemView);
-        this.initView(itemView);
     }
-
-    protected abstract void initView(View itemView);
 
     public abstract void setupView(Context ctx, int groupPosition, int itemPosition, T item);
 

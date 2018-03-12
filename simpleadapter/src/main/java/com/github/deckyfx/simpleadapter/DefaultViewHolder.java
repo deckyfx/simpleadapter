@@ -11,10 +11,7 @@ public class DefaultViewHolder<E extends AdapterItem> extends AbstractViewHolder
 
     public DefaultViewHolder(View itemView) {
         super(itemView);
-    }
 
-    @Override
-    protected void initView(View itemView) {
         View view                   = itemView.findViewById(android.R.id.text1);
         if (view instanceof CheckedTextView) {
             this.mCheckedTextView1  = (CheckedTextView) view;
