@@ -27,7 +27,7 @@ public class DefaultViewHolder<E extends AdapterItem> extends AbstractViewHolder
         } else if (view instanceof TextView) {
             this.mTextView2         = (TextView) view;
         }
-    }
+    } 
 
     @Override
     public void setupView(Context ctx, int groupPosition, int itemPosition, AdapterItem item) {
