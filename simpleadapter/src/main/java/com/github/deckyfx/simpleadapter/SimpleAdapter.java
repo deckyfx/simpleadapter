@@ -72,27 +72,12 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
     }
 
     private AbstractViewHolder<E> initViewHolder(View convertView, Class<? extends AbstractViewHolder<E>> vhClass, int fallbackLayout) {
-        AbstractViewHolder viewHolder = null;
         if (convertView == null) {
             convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(fallbackLayout, null);
         }
-        // well set up the AbstractViewHolder
-        Constructor<? extends AbstractViewHolder> ctor = null;
-        try {
-            ctor = vhClass.getDeclaredConstructor(View.class);
-            ctor.setAccessible(true);
-            viewHolder = ctor.newInstance(convertView);
-            if (viewHolder == null) {
-                throw new Error("Failed to initiate View Holder " + this.mViewHolderClass.getCanonicalName());
-            }
-        } catch (NoSuchMethodException x) {
-            x.printStackTrace();
-        } catch (InstantiationException x) {
-            x.printStackTrace();
-        } catch (InvocationTargetException x) {
-            x.printStackTrace();
-        } catch (IllegalAccessException x) {
-            x.printStackTrace();
+        AbstractViewHolder viewHolder = SimpleAdapter.createViewHolderInstance(vhClass, convertView);
+        if (viewHolder == null) {
+            throw new Error("Failed to initiate View Holder " + vhClass.getCanonicalName());
         }
         return viewHolder;
     }
@@ -276,5 +261,21 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
                 notifyDataSetInvalidated();
             }
         }
+    }
+
+    public static AbstractViewHolder createViewHolderInstance(Class<? extends AbstractViewHolder> klas, View itemView) {
+        try {
+            Constructor<? extends AbstractViewHolder> ctor  = klas.getConstructor(View.class);
+            return ctor.newInstance(itemView);
+        } catch (NoSuchMethodException x) {
+            x.printStackTrace();
+        } catch (InstantiationException x) {
+            x.printStackTrace();
+        } catch (InvocationTargetException x) {
+            x.printStackTrace();
+        } catch (IllegalAccessException x) {
+            x.printStackTrace();
+        }
+        return null;
     }
 }

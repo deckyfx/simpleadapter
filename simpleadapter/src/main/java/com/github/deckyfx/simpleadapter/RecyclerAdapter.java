@@ -70,27 +70,13 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
     // Create new views (invoked by the layout manager)
     @Override
     public AbstractViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
+        Context context         = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         // Inflate the custom layout
-        View itemView = inflater.inflate(this.mItemLayout, parent, false);
-        AbstractViewHolder viewHolder = null;
-        Constructor<? extends AbstractViewHolder> ctor = null;
-        try {
-            ctor = this.mViewHolderClass.getDeclaredConstructor(View.class);
-            ctor.setAccessible(true);
-            viewHolder = ctor.newInstance(itemView);
-            if (viewHolder == null) {
-                throw new Error("Failed to initiate View Holder " + this.mViewHolderClass.getCanonicalName());
-            }
-        } catch (NoSuchMethodException x) {
-            x.printStackTrace();
-        } catch (InstantiationException x) {
-            x.printStackTrace();
-        } catch (InvocationTargetException x) {
-            x.printStackTrace();
-        } catch (IllegalAccessException x) {
-            x.printStackTrace();
+        View itemView           = inflater.inflate(this.mItemLayout, parent, false);
+        AbstractViewHolder viewHolder = SimpleAdapter.createViewHolderInstance(this.mViewHolderClass, itemView);
+        if (viewHolder == null) {
+            throw new Error("Failed to initiate View Holder " + this.mViewHolderClass.getCanonicalName());
         }
         return viewHolder;
     }

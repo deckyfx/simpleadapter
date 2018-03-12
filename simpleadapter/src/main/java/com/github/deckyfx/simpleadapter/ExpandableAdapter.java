@@ -82,28 +82,12 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
     }
 
     private AbstractViewHolder initViewHolder(View convertView, Class<? extends AbstractViewHolder> vhClass, int fallbackLayout) {
-        AbstractViewHolder viewHolder;
         if (convertView == null) {
             convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(fallbackLayout, null);
         }
-        // well set up the AbstractViewHolder
-        viewHolder  = null;
-        Constructor<? extends AbstractViewHolder> ctor = null;
-        try {
-            ctor = vhClass.getDeclaredConstructor(View.class);
-            ctor.setAccessible(true);
-            viewHolder = ctor.newInstance(convertView);
-            if (viewHolder == null) {
-                throw new Error("Failed to initiate View Holder " + vhClass.getCanonicalName());
-            }
-        } catch (NoSuchMethodException x) {
-            x.printStackTrace();
-        } catch (InstantiationException x) {
-            x.printStackTrace();
-        } catch (InvocationTargetException x) {
-            x.printStackTrace();
-        } catch (IllegalAccessException x) {
-            x.printStackTrace();
+        AbstractViewHolder viewHolder = SimpleAdapter.createViewHolderInstance(vhClass, convertView);
+        if (viewHolder == null) {
+            throw new Error("Failed to initiate View Holder " + vhClass.getCanonicalName());
         }
         return viewHolder;
     }
