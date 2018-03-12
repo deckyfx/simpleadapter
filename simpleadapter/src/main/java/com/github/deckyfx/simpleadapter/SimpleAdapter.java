@@ -264,21 +264,11 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
     }
 
     public static AbstractViewHolder createViewHolderInstance(Class<? extends AbstractViewHolder> klas, View itemView) {
-        Constructor<? extends AbstractViewHolder> ctor;
         try {
-            try {
-                ctor = klas.getDeclaredConstructor(View.class);
-                return ctor.newInstance(itemView);
-            } catch (NoSuchMethodException e) {
-                ctor  = (Constructor<? extends AbstractViewHolder>) klas.getConstructors()[0];
-                Class<?>[] params = ctor.getParameterTypes();
-                Object[] arguments = new Object[params.length];
-                for (int i = 0; i < params.length; i++) {
-                    arguments[i] = null;
-                }
-                arguments[params.length - 1] = itemView;
-                return ctor.newInstance(arguments);
-            }
+            Constructor<? extends AbstractViewHolder> ctor  = klas.getDeclaredConstructor(View.class);
+            return ctor.newInstance( itemView);
+        } catch (NoSuchMethodException x) {
+            x.printStackTrace();
         } catch (InstantiationException x) {
             x.printStackTrace();
         } catch (InvocationTargetException x) {

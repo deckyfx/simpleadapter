@@ -115,16 +115,6 @@ private static class ItemVH<E extends AdapterItem> extends AbstractViewHolder<E>
 
 ```
 
-
-### Proguard misschief
-You need to add proguard rules
-```
-#Keep proguar to adding extra parameter to ViewHolder class
--keepclassmembers class * extends com.github.deckyfx.simpleadapter.AbstractViewHolder {
-    public protected <init>(...);
-}
-```
-
 More sample is [here]
 
 ## Feature:
