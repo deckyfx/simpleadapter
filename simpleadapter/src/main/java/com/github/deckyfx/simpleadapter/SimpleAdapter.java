@@ -75,7 +75,7 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         if (convertView == null) {
             convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(fallbackLayout, null);
         }
-        AbstractViewHolder viewHolder = SimpleAdapter.createViewHolderInstance(vhClass, convertView);
+        AbstractViewHolder viewHolder = this.createViewHolderInstance(vhClass, convertView);
         if (viewHolder == null) {
             throw new Error("Failed to initiate View Holder " + vhClass.getCanonicalName());
         }
@@ -207,6 +207,22 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         public boolean onViewBind(SimpleAdapter adapter, int position);
     }
 
+    private AbstractViewHolder createViewHolderInstance(Class<? extends AbstractViewHolder> klas, View itemView) {
+        try {
+            Constructor<? extends AbstractViewHolder> ctor  = klas.getDeclaredConstructor(View.class);
+            return ctor.newInstance( itemView);
+        } catch (NoSuchMethodException x) {
+            x.printStackTrace();
+        } catch (InstantiationException x) {
+            x.printStackTrace();
+        } catch (InvocationTargetException x) {
+            x.printStackTrace();
+        } catch (IllegalAccessException x) {
+            x.printStackTrace();
+        }
+        return null;
+    }
+
     public static final class DEFAULT_LIST_VIEW {
         public static final int SIMPLE_LIST_ITEM_1                  = android.R.layout.simple_list_item_1;
         public static final int SIMPLE_LIST_ITEM_2                  = android.R.layout.simple_list_item_2;
@@ -261,21 +277,5 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
                 notifyDataSetInvalidated();
             }
         }
-    }
-
-    public static AbstractViewHolder createViewHolderInstance(Class<? extends AbstractViewHolder> klas, View itemView) {
-        try {
-            Constructor<? extends AbstractViewHolder> ctor  = klas.getDeclaredConstructor(View.class);
-            return ctor.newInstance( itemView);
-        } catch (NoSuchMethodException x) {
-            x.printStackTrace();
-        } catch (InstantiationException x) {
-            x.printStackTrace();
-        } catch (InvocationTargetException x) {
-            x.printStackTrace();
-        } catch (IllegalAccessException x) {
-            x.printStackTrace();
-        }
-        return null;
     }
 }
