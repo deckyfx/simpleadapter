@@ -36,6 +36,7 @@ dependencies {
     implementation "com.android.support:design:$android_support_version"
     implementation "com.android.support:support-v4:$android_support_version"
 
+    implementation project(path: ':simpleadapter')
     //implementation project(path: ':simpleadapter-kotlin')
     //implementation project(path: ':simpleadapter')implementation 'com.github.deckyfx:simpleadapter:-SNAPSHOT@aar'
 

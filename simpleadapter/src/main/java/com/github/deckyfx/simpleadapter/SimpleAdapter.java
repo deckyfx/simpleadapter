@@ -31,7 +31,11 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
     private AnimationSet mScrollAnimation;
 
     public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList) {
-        this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, (Class<? extends AbstractViewHolder<E>>) DefaultViewHolder.class);
+        this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
+    }
+
+    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout) {
+        this(ctx, itemsList, itemLayout, DefaultViewHolder.class);
     }
 
     public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, Class<? extends AbstractViewHolder<E>> viewHolderClass) {
@@ -39,10 +43,10 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
     }
 
     public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AbstractViewHolder<E> viewHolderInstance) {
-        this(ctx, itemsList, itemLayout, (Class<? extends AbstractViewHolder<E>>) viewHolderInstance.getClass());
+        this(ctx, itemsList, itemLayout, viewHolderInstance.getClass());
     }
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AbstractViewHolder<E>> viewHolderClass) {
+    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AbstractViewHolder> viewHolderClass) {
         super(ctx, itemLayout, itemsList);
         this.mItemsList = itemsList;
         this.mItemLayout = itemLayout;
@@ -67,7 +71,7 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         return (E) this.mItemsList.get(i);
     }
 
-    private AbstractViewHolder initViewHolder(View convertView, Class<? extends AbstractViewHolder> vhClass, int fallbackLayout) {
+    private AbstractViewHolder<E> initViewHolder(View convertView, Class<? extends AbstractViewHolder<E>> vhClass, int fallbackLayout) {
         AbstractViewHolder viewHolder = null;
         if (convertView == null) {
             convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(fallbackLayout, null);

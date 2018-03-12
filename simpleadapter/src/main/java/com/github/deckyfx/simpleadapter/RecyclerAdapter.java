@@ -19,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Created by decky on 8/3/16.
  */
-public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<AbstractViewHolder> implements Serializable, Filterable {
+public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<AbstractViewHolder<E>> implements Serializable, Filterable {
     private AdapterDataSet<E> mItemsList, mOriginalList, mBackupList;
     private int mItemLayout;
     private Context mCtx;
@@ -32,18 +32,22 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
     private AnimationSet mScrollAnimation;
 
     public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList) {
-        this(ctx, itemsList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, (Class<? extends AbstractViewHolder<E>>) DefaultViewHolder.class);
+        this(ctx, itemsList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
     }
 
     public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout) {
-        this(ctx, itemsList, itemLayout, (Class<? extends AbstractViewHolder<E>>) DefaultViewHolder.class);
+        this(ctx, itemsList, itemLayout, DefaultViewHolder.class);
+    }
+
+    public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, Class<? extends AbstractViewHolder> viewHolderClass) {
+        this(ctx, itemsList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
     }
 
     public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AbstractViewHolder<E> viewHolderInstance) {
-        this(ctx, itemsList, itemLayout, (Class<? extends AbstractViewHolder<E>>) viewHolderInstance.getClass());
+        this(ctx, itemsList, itemLayout, viewHolderInstance.getClass());
     }
 
-    public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AbstractViewHolder<E>> viewHolderClass) {
+    public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AbstractViewHolder> viewHolderClass) {
         this.mItemsList = itemsList;
         this.mItemLayout = itemLayout;
         this.mViewHolderClass = viewHolderClass;

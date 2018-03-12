@@ -49,8 +49,9 @@ public class MainActivity extends AppCompatActivity {
 
         String jsontext = "{\"text\":\"Some text\",\"text2\":\"Some text 2\",\"value\":1234,\"data\":true,\"innerdata\":\"Inner\",\"inneritem\":{\"lol\":1203},\"list\":[{\"lol\":0},{\"lol\":1},{\"lol\":2}],\"_date\":\"2016-11-10\"}";
         try {
-        } catch (JsonSyntaxException err) {
             TestItem.fromJson(jsontext, TestItem.class);
+        } catch (Exception e1) {
+            e1.printStackTrace();
         }
     }
 
