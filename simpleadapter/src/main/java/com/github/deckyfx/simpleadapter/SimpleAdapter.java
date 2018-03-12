@@ -31,18 +31,18 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
     private AnimationSet mScrollAnimation;
 
     public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList) {
-        this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
+        this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, (Class<? extends AbstractViewHolder<E>>) DefaultViewHolder.class);
     }
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, Class<? extends AbstractViewHolder> viewHolderClass) {
+    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, Class<? extends AbstractViewHolder<E>> viewHolderClass) {
         this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, viewHolderClass);
     }
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AbstractViewHolder viewHolderInstance) {
-        this(ctx, itemsList, itemLayout, viewHolderInstance.getClass());
+    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AbstractViewHolder<E> viewHolderInstance) {
+        this(ctx, itemsList, itemLayout, (Class<? extends AbstractViewHolder<E>>) viewHolderInstance.getClass());
     }
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AbstractViewHolder> viewHolderClass) {
+    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AbstractViewHolder<E>> viewHolderClass) {
         super(ctx, itemLayout, itemsList);
         this.mItemsList = itemsList;
         this.mItemLayout = itemLayout;
@@ -132,9 +132,9 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
             viewHolder.setOnTouchListener(this.mTouchListener);
         }
         if (position < this.mItemsList.size()) {
-            BaseItem item = this.mItemsList.get(position);
+            E item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
-                viewHolder.setupView(this.mCtx, position, -1, item);
+                viewHolder.setupView(this.mCtx, -1, position, item);
                 if (this.mViewBindListener != null) {
                     this.mViewBindListener.onViewBind(this, position);
                 }

@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.CheckedTextView;
 import android.widget.TextView;
 
-public class DefaultViewHolder extends AbstractViewHolder {
+public class DefaultViewHolder<E extends AdapterItem> extends AbstractViewHolder<E> {
     private TextView mTextView1, mTextView2;
     private CheckedTextView mCheckedTextView1, mCheckedTextView2;
 
@@ -30,26 +30,23 @@ public class DefaultViewHolder extends AbstractViewHolder {
     }
 
     @Override
-    public void setupView(Context ctx, int groupPosition, int itemPosition, BaseItem itemobject) {
-        if (itemobject instanceof AdapterItem) {
-            AdapterItem item = (AdapterItem) itemobject;
-            if (item != null) {
-                if (this.mTextView1 != null) {
-                    this.mTextView1.setText(item.text);
-                    this.mTextView1.setTag(groupPosition);
-                }
-                if (this.mTextView2 != null) {
-                    this.mTextView2.setText(item.text2);
-                    this.mTextView2.setTag(groupPosition);
-                }
-                if (this.mCheckedTextView1 != null) {
-                    this.mCheckedTextView1.setText(item.text);
-                    this.mCheckedTextView1.setTag(groupPosition);
-                }
-                if (this.mCheckedTextView2 != null) {
-                    this.mCheckedTextView2.setText(item.text2);
-                    this.mCheckedTextView2.setTag(groupPosition);
-                }
+    public void setupView(Context ctx, int groupPosition, int itemPosition, AdapterItem item) {
+        if (item != null) {
+            if (this.mTextView1 != null) {
+                this.mTextView1.setText(item.text);
+                this.mTextView1.setTag(itemPosition);
+            }
+            if (this.mTextView2 != null) {
+                this.mTextView2.setText(item.text2);
+                this.mTextView2.setTag(itemPosition);
+            }
+            if (this.mCheckedTextView1 != null) {
+                this.mCheckedTextView1.setText(item.text);
+                this.mCheckedTextView1.setTag(itemPosition);
+            }
+            if (this.mCheckedTextView2 != null) {
+                this.mCheckedTextView2.setText(item.text2);
+                this.mCheckedTextView2.setTag(itemPosition);
             }
         }
     }
