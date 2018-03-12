@@ -20,7 +20,7 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
     private ExpandableAdapterDataSet<E, T> mGroupList, mBackupGroupList;
     private int mGroupLayout, mChildLayout;
     private Context mCtx;
-    private Class<? extends AdapterItem.ViewHolder> mGroupViewHolderClass, mChildViewHolderClass;
+    private Class<? extends AbstractViewHolder> mGroupViewHolderClass, mChildViewHolderClass;
     private SimpleAdapter.ClickListener mClickListener;
     private SimpleAdapter.TouchListener mTouchListener;
     private ViewBindListener mViewBindListener;
@@ -32,19 +32,19 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
     public ExpandableAdapter(Context ctx, ExpandableAdapterDataSet<E, T> groupList) {
         this(ctx, groupList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_EXPANDABLE_LIST_ITEM_1,
                 SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
-                AdapterItem.ViewHolder.class,
-                AdapterItem.ViewHolder.class);
+                DefaultViewHolder.class,
+                DefaultViewHolder.class);
     }
 
-    public ExpandableAdapter(Context ctx, ExpandableAdapterDataSet<E, T> groupList, Class<? extends AdapterItem.ViewHolder> groupViewHolderClass) {
+    public ExpandableAdapter(Context ctx, ExpandableAdapterDataSet<E, T> groupList, Class<? extends AbstractViewHolder> groupViewHolderClass) {
         this(ctx, groupList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
                 SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
                 groupViewHolderClass,
-                AdapterItem.ViewHolder.class);
+                DefaultViewHolder.class);
     }
 
-    public ExpandableAdapter(Context ctx, ExpandableAdapterDataSet<E, T> groupList, Class<? extends AdapterItem.ViewHolder> viewHolderClass,
-                             Class<? extends AdapterItem.ViewHolder> childViewHolderClass) {
+    public ExpandableAdapter(Context ctx, ExpandableAdapterDataSet<E, T> groupList, Class<? extends AbstractViewHolder> viewHolderClass,
+                             Class<? extends AbstractViewHolder> childViewHolderClass) {
         this(ctx, groupList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
                 SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
                 viewHolderClass,
@@ -52,14 +52,14 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
     }
 
     public ExpandableAdapter(Context ctx, ExpandableAdapterDataSet<E, T> itemList, int groupLayout,
-                             int childLayout, AdapterItem.ViewHolder groupViewHolderClass,
-                             AdapterItem.ViewHolder childViewHolderClass) {
+                             int childLayout, AbstractViewHolder groupViewHolderClass,
+                             AbstractViewHolder childViewHolderClass) {
         this(ctx, itemList, groupLayout, childLayout, groupViewHolderClass.getClass(), childViewHolderClass.getClass());
     }
 
     public ExpandableAdapter(Context ctx, ExpandableAdapterDataSet<E, T> itemList, int groupLayout,
-                             int childLayout, Class<? extends AdapterItem.ViewHolder> groupViewHolderClass,
-                             Class<? extends AdapterItem.ViewHolder> childViewHolderClass) {
+                             int childLayout, Class<? extends AbstractViewHolder> groupViewHolderClass,
+                             Class<? extends AbstractViewHolder> childViewHolderClass) {
         this.mGroupList = itemList;
         this.mGroupLayout = groupLayout;
         this.mChildLayout = childLayout;
@@ -81,14 +81,14 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
         this.mTag = tag;
     }
 
-    private AdapterItem.ViewHolder initViewHolder(View convertView, Class<? extends AdapterItem.ViewHolder> vhClass, int fallbackLayout) {
-        AdapterItem.ViewHolder viewHolder;
+    private AbstractViewHolder initViewHolder(View convertView, Class<? extends AbstractViewHolder> vhClass, int fallbackLayout) {
+        AbstractViewHolder viewHolder;
         if (convertView == null) {
             convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(fallbackLayout, null);
         }
-        // well set up the ViewHolder
-        viewHolder = new AdapterItem.ViewHolder(convertView);
-        Constructor<? extends AdapterItem.ViewHolder> ctor = null;
+        // well set up the AbstractViewHolder
+        viewHolder  = null;
+        Constructor<? extends AbstractViewHolder> ctor = null;
         try {
             ctor = vhClass.getDeclaredConstructor(View.class);
             ctor.setAccessible(true);
@@ -194,7 +194,7 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        AdapterItem.ViewHolder viewHolder;
+        AbstractViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = this.initViewHolder(convertView, this.mGroupViewHolderClass, this.mGroupLayout);
             convertView.setTag(viewHolder);
@@ -202,8 +202,8 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
             // we've just avoided calling findViewById() on resource everytime
             // just use the viewHolder
             Object tag = convertView.getTag();
-            if (tag instanceof AdapterItem.ViewHolder) {
-                viewHolder = (AdapterItem.ViewHolder) convertView.getTag();
+            if (tag instanceof AbstractViewHolder) {
+                viewHolder = (AbstractViewHolder) convertView.getTag();
             } else {
                 viewHolder = this.initViewHolder(convertView, this.mGroupViewHolderClass, this.mGroupLayout);
                 convertView.setTag(viewHolder);
@@ -218,7 +218,7 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
         if (groupPosition < this.getGroupCount()) {
             AdapterItem item = this.getGroup(groupPosition);
             if (viewHolder != null && item != null) {
-                viewHolder.setupView(this.mCtx, groupPosition, item);
+                viewHolder.setupView(this.mCtx, groupPosition, -1, item);
                 if (this.mViewBindListener != null) {
                     this.mViewBindListener.onViewBind(this, groupPosition, -1);
                 }
@@ -232,7 +232,7 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        AdapterItem.ViewHolder viewHolder;
+        AbstractViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = this.initViewHolder(convertView, this.mChildViewHolderClass, this.mChildLayout);
             convertView.setTag(viewHolder);
@@ -240,8 +240,8 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
             // we've just avoided calling findViewById() on resource everytime
             // just use the viewHolder
             Object tag = convertView.getTag();
-            if (tag instanceof AdapterItem.ViewHolder) {
-                viewHolder = (AdapterItem.ViewHolder) convertView.getTag();
+            if (tag instanceof AbstractViewHolder) {
+                viewHolder = (AbstractViewHolder) convertView.getTag();
             } else {
                 viewHolder = this.initViewHolder(convertView, this.mChildViewHolderClass, this.mChildLayout);
                 convertView.setTag(viewHolder);

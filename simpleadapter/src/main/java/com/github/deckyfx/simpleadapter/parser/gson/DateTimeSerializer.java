@@ -41,7 +41,7 @@ public class DateTimeSerializer implements JsonDeserializer<Date>, JsonSerialize
                 }
             }
         }
-        throw new JsonParseException("Unparseable date: \"" + jsonElement.getAsString() + "\". Supported formats: " + Arrays.toString(DATE_FORMATS));
+        throw new JsonParseException("Unable to parse date: \"" + jsonElement.getAsString() + "\". Supported formats: " + Arrays.toString(DATE_FORMATS));
     }
 
     @Override

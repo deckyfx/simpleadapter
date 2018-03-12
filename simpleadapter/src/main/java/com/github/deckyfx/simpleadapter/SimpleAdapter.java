@@ -31,18 +31,18 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
     private AnimationSet mScrollAnimation;
 
     public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList) {
-        this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, AdapterItem.ViewHolder.class);
+        this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
     }
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, Class<? extends AdapterItem.ViewHolder> viewHolderClass) {
+    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, Class<? extends AbstractViewHolder> viewHolderClass) {
         this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, viewHolderClass);
     }
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AdapterItem.ViewHolder viewHolderInstance) {
+    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AbstractViewHolder viewHolderInstance) {
         this(ctx, itemsList, itemLayout, viewHolderInstance.getClass());
     }
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AdapterItem.ViewHolder> viewHolderClass) {
+    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AbstractViewHolder> viewHolderClass) {
         super(ctx, itemLayout, itemsList);
         this.mItemsList = itemsList;
         this.mItemLayout = itemLayout;
@@ -67,14 +67,13 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         return (E) this.mItemsList.get(i);
     }
 
-    private AdapterItem.ViewHolder initViewHolder(View convertView, Class<? extends AdapterItem.ViewHolder> vhClass, int fallbackLayout) {
-        AdapterItem.ViewHolder viewHolder;
+    private AbstractViewHolder initViewHolder(View convertView, Class<? extends AbstractViewHolder> vhClass, int fallbackLayout) {
+        AbstractViewHolder viewHolder = null;
         if (convertView == null) {
             convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(fallbackLayout, null);
         }
-        // well set up the ViewHolder
-        viewHolder = new AdapterItem.ViewHolder(convertView);
-        Constructor<? extends AdapterItem.ViewHolder> ctor = null;
+        // well set up the AbstractViewHolder
+        Constructor<? extends AbstractViewHolder> ctor = null;
         try {
             ctor = vhClass.getDeclaredConstructor(View.class);
             ctor.setAccessible(true);
@@ -110,7 +109,7 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        AdapterItem.ViewHolder viewHolder;
+        AbstractViewHolder viewHolder;
         if (convertView == null) {
             convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(mItemLayout, null);
             viewHolder = this.initViewHolder(convertView, this.mViewHolderClass, this.mItemLayout);
@@ -119,8 +118,8 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
             // we've just avoided calling findViewById() on resource everytime
             // just use the viewHolder
             Object tag = convertView.getTag();
-            if (tag instanceof AdapterItem.ViewHolder) {
-                viewHolder = (AdapterItem.ViewHolder) convertView.getTag();
+            if (tag instanceof AbstractViewHolder) {
+                viewHolder = (AbstractViewHolder) convertView.getTag();
             } else {
                 viewHolder = this.initViewHolder(convertView, this.mViewHolderClass, this.mItemLayout);
                 convertView.setTag(viewHolder);
@@ -135,7 +134,7 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         if (position < this.mItemsList.size()) {
             BaseItem item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
-                viewHolder.setupView(this.mCtx, position, item);
+                viewHolder.setupView(this.mCtx, position, -1, item);
                 if (this.mViewBindListener != null) {
                     this.mViewBindListener.onViewBind(this, position);
                 }
@@ -202,12 +201,12 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         this.mViewBindListener = listener;
     }
 
-    public interface ClickListener extends AdapterItem.ViewHolder.ClickListener {
+    public interface ClickListener extends AbstractViewHolder.ClickListener {
         @Override
         public void onClick(View view);
     }
 
-    public interface TouchListener extends AdapterItem.ViewHolder.TouchListener {
+    public interface TouchListener extends AbstractViewHolder.TouchListener {
         @Override
         public boolean onTouch(View view, MotionEvent mv);
     }
@@ -217,19 +216,19 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
     }
 
     public static final class DEFAULT_LIST_VIEW {
-        public static final int SIMPLE_LIST_ITEM_1 = android.R.layout.simple_list_item_1;
-        public static final int SIMPLE_LIST_ITEM_2 = android.R.layout.simple_list_item_2;
-        public static final int SIMPLE_SPINER_ITEM = android.R.layout.simple_spinner_item;
-        public static final int SIMPLE_DROPDOWN_ITEM_1LINE = android.R.layout.simple_dropdown_item_1line;
-        public static final int SIMPLE_EXPANDABLE_LIST_ITEM_1 = android.R.layout.simple_expandable_list_item_1;
-        public static final int SIMPLE_EXPANDABLE_LIST_ITEM_2 = android.R.layout.simple_expandable_list_item_2;
-        public static final int SIMPLE_LIST_ITEM_ACTIVATED_1 = android.R.layout.simple_list_item_activated_1;
-        public static final int SIMPLE_LIST_ITEM_ACTIVATED_2 = android.R.layout.simple_list_item_activated_2;
-        public static final int SIMPLE_LIST_ITEM_CHECKED = android.R.layout.simple_list_item_checked;
-        public static final int SIMPLE_LIST_ITEM_MULTIPLE_CHOICE = android.R.layout.simple_list_item_multiple_choice;
-        public static final int SIMPLE_LIST_ITEM_SINGLE_CHOICE = android.R.layout.simple_list_item_single_choice;
-        public static final int SIMPLE_SELECTABLE_LIST_ITEM = android.R.layout.simple_selectable_list_item;
-        public static final int SIMPLE_SPINNER_DROPDOWN_ITEM = android.R.layout.simple_spinner_dropdown_item;
+        public static final int SIMPLE_LIST_ITEM_1                  = android.R.layout.simple_list_item_1;
+        public static final int SIMPLE_LIST_ITEM_2                  = android.R.layout.simple_list_item_2;
+        public static final int SIMPLE_SPINER_ITEM                  = android.R.layout.simple_spinner_item;
+        public static final int SIMPLE_DROPDOWN_ITEM_1LINE          = android.R.layout.simple_dropdown_item_1line;
+        public static final int SIMPLE_EXPANDABLE_LIST_ITEM_1       = android.R.layout.simple_expandable_list_item_1;
+        public static final int SIMPLE_EXPANDABLE_LIST_ITEM_2       = android.R.layout.simple_expandable_list_item_2;
+        public static final int SIMPLE_LIST_ITEM_ACTIVATED_1        = android.R.layout.simple_list_item_activated_1;
+        public static final int SIMPLE_LIST_ITEM_ACTIVATED_2        = android.R.layout.simple_list_item_activated_2;
+        public static final int SIMPLE_LIST_ITEM_CHECKED            = android.R.layout.simple_list_item_checked;
+        public static final int SIMPLE_LIST_ITEM_MULTIPLE_CHOICE    = android.R.layout.simple_list_item_multiple_choice;
+        public static final int SIMPLE_LIST_ITEM_SINGLE_CHOICE      = android.R.layout.simple_list_item_single_choice;
+        public static final int SIMPLE_SELECTABLE_LIST_ITEM         = android.R.layout.simple_selectable_list_item;
+        public static final int SIMPLE_SPINNER_DROPDOWN_ITEM        = android.R.layout.simple_spinner_dropdown_item;
     }
 
     public class AdapterFilter extends Filter {

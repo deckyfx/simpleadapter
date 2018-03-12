@@ -19,11 +19,11 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Created by decky on 8/3/16.
  */
-public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<AdapterItem.RecyclerViewHolder> implements Serializable, Filterable {
+public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<AbstractViewHolder> implements Serializable, Filterable {
     private AdapterDataSet<E> mItemsList, mOriginalList, mBackupList;
     private int mItemLayout;
     private Context mCtx;
-    private Class<? extends AdapterItem.RecyclerViewHolder> mViewHolderClass;
+    private Class<? extends AbstractViewHolder> mViewHolderClass;
     private SimpleAdapter.ClickListener mClickListener;
     private SimpleAdapter.TouchListener mTouchListener;
     private ViewBindListener mViewBindListener;
@@ -32,18 +32,18 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ad
     private AnimationSet mScrollAnimation;
 
     public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList) {
-        this(ctx, itemsList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, AdapterItem.RecyclerViewHolder.class);
+        this(ctx, itemsList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
     }
 
     public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout) {
-        this(ctx, itemsList, itemLayout, AdapterItem.RecyclerViewHolder.class);
+        this(ctx, itemsList, itemLayout, AbstractViewHolder.class);
     }
 
-    public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AdapterItem.RecyclerViewHolder viewHolderInstance) {
+    public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AbstractViewHolder viewHolderInstance) {
         this(ctx, itemsList, itemLayout, viewHolderInstance.getClass());
     }
 
-    public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AdapterItem.RecyclerViewHolder> viewHolderClass) {
+    public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AbstractViewHolder> viewHolderClass) {
         this.mItemsList = itemsList;
         this.mItemLayout = itemLayout;
         this.mViewHolderClass = viewHolderClass;
@@ -65,14 +65,14 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ad
 
     // Create new views (invoked by the layout manager)
     @Override
-    public AdapterItem.RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AbstractViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         // Inflate the custom layout
         View itemView = inflater.inflate(this.mItemLayout, parent, false);
 
-        AdapterItem.RecyclerViewHolder viewHolder = new AdapterItem.RecyclerViewHolder(itemView);
-        Constructor<? extends AdapterItem.RecyclerViewHolder> ctor = null;
+        AbstractViewHolder viewHolder = null;
+        Constructor<? extends AbstractViewHolder> ctor = null;
         try {
             ctor = this.mViewHolderClass.getDeclaredConstructor(View.class);
             ctor.setAccessible(true);
@@ -90,7 +90,7 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ad
     }
 
     @Override
-    public void onBindViewHolder(AdapterItem.RecyclerViewHolder viewHolder, int position) {
+    public void onBindViewHolder(AbstractViewHolder viewHolder, int position) {
         viewHolder.setLayoutTag(position);
         if (this.mClickListener != null) {
             viewHolder.setOnClickListener(this.mClickListener);
@@ -101,7 +101,7 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ad
         if (position < this.mItemsList.size()) {
             BaseItem item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
-                viewHolder.setupView(this.mCtx, position, item);
+                viewHolder.setupView(this.mCtx, position, -1, item);
                 if (this.mViewBindListener != null) {
                     this.mViewBindListener.onViewBind(this, position);
                 }

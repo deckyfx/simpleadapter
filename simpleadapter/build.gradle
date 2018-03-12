@@ -48,28 +48,6 @@ configurations {
     }
 }
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    // NOTE: test libraries
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-
-    // NOTE: support libraries
-    provided "com.android.support:appcompat-v7:$android_support_version"
-    provided "com.android.support:design:$android_support_version"
-    provided "com.android.support:recyclerview-v7:$android_support_version"
-    provided "com.android.support:support-v4:$android_support_version"
-
-    // NOTE: 3rd parties
-    provided 'com.google.code.gson:gson:2.8.2'
-    provided 'com.squareup.moshi:moshi:1.5.0'
-    provided 'com.fasterxml.jackson.core:jackson-databind:2.8.4'
-    provided 'com.fasterxml.jackson.core:jackson-core:2.8.4'
-    provided 'com.fasterxml.jackson.core:jackson-annotations:2.8.4'
-}
-
 // build a jar with source files
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -102,3 +80,27 @@ android.libraryVariants.all { variant ->
     task.from variant.javaCompile.destinationDir
     artifacts.add('archives', task);
 }
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // NOTE: test libraries
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    // NOTE: support libraries
+    provided "com.android.support:appcompat-v7:$android_support_version"
+    provided "com.android.support:design:$android_support_version"
+    provided "com.android.support:recyclerview-v7:$android_support_version"
+    provided "com.android.support:support-v4:$android_support_version"
+
+    // NOTE: 3rd parties
+    provided 'com.google.code.gson:gson:2.8.2'
+    provided 'com.squareup.moshi:moshi:1.5.0'
+    provided 'com.fasterxml.jackson.core:jackson-databind:2.8.4'
+    provided 'com.fasterxml.jackson.core:jackson-core:2.8.4'
+    provided 'com.fasterxml.jackson.core:jackson-annotations:2.8.4'
+}
+
+
