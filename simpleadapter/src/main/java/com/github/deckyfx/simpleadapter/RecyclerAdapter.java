@@ -5,16 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.TranslateAnimation;
 import android.widget.Filter;
 import android.widget.Filterable;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by decky on 8/3/16.
@@ -24,15 +19,13 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
     private int mItemLayout;
     private Context mCtx;
     private Class<? extends AbstractViewHolder> mViewHolderClass;
-    private SimpleAdapter.ClickListener mClickListener;
-    private SimpleAdapter.TouchListener mTouchListener;
-    private ViewBindListener mViewBindListener;
+    private OnViewBindListener mItemViewBindListener;
     private Filter mFilter;
     private int mCountMargin;
     private AnimationSet mScrollAnimation;
 
     public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList) {
-        this(ctx, itemsList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
+        this(ctx, itemsList, AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
     }
 
     public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout) {
@@ -40,7 +33,7 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
     }
 
     public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, Class<? extends AbstractViewHolder> viewHolderClass) {
-        this(ctx, itemsList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
+        this(ctx, itemsList, AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
     }
 
     public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AbstractViewHolder<E> viewHolderInstance) {
@@ -48,23 +41,15 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
     }
 
     public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, Class<? extends AbstractViewHolder> viewHolderClass) {
-        this.mItemsList = itemsList;
-        this.mItemLayout = itemLayout;
-        this.mViewHolderClass = viewHolderClass;
-        this.mCountMargin = 0;
-        this.mCtx = ctx;
+        this.mItemsList         = itemsList;
+        this.mItemLayout        = itemLayout;
+        this.mViewHolderClass   = viewHolderClass;
+        this.mCountMargin       = 0;
+        this.mCtx               = ctx;
     }
 
-    public void setOnClickListener(SimpleAdapter.ClickListener listener) {
-        this.mClickListener = listener;
-    }
-
-    public void setOnTouchListener(SimpleAdapter.TouchListener listener) {
-        this.mTouchListener = listener;
-    }
-
-    public void setOnViewBindListener(ViewBindListener listener) {
-        this.mViewBindListener = listener;
+    public void setOnItemViewBindListener(OnViewBindListener listener) {
+        this.mItemViewBindListener = listener;
     }
 
     // Create new views (invoked by the layout manager)
@@ -74,28 +59,19 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
         LayoutInflater inflater = LayoutInflater.from(context);
         // Inflate the custom layout
         View itemView           = inflater.inflate(this.mItemLayout, parent, false);
-        AbstractViewHolder viewHolder = this.createViewHolderInstance(this.mViewHolderClass, itemView);
-        if (viewHolder == null) {
-            throw new Error("Failed to initiate View Holder " + this.mViewHolderClass.getCanonicalName());
-        }
+        AbstractViewHolder viewHolder = AdapterUtil.createViewHolderInstance(this.mViewHolderClass, itemView);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(AbstractViewHolder viewHolder, int position) {
         viewHolder.setLayoutTag(position);
-        if (this.mClickListener != null) {
-            viewHolder.setOnClickListener(this.mClickListener);
-        }
-        if (this.mTouchListener != null) {
-            viewHolder.setOnTouchListener(this.mTouchListener);
-        }
         if (position < this.mItemsList.size()) {
             E item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, -1, position, item);
-                if (this.mViewBindListener != null) {
-                    this.mViewBindListener.onViewBind(this, position);
+                if (this.mItemViewBindListener != null) {
+                    this.mItemViewBindListener.onViewBind(this, viewHolder, position);
                 }
             }
         }
@@ -131,20 +107,6 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
         this.mBackupList.addAll(this.mItemsList);
     }
 
-    public AnimationSet createDefaultScrollAnimation() {
-        AnimationSet scrollAnimation = new AnimationSet(true);
-        Animation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setDuration(800);
-        scrollAnimation.addAnimation(animation);
-        animation = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f
-        );
-        animation.setDuration(600);
-        scrollAnimation.addAnimation(animation);
-        return scrollAnimation;
-    }
-
     public AnimationSet getScrollAnimation() {
         return this.mScrollAnimation;
     }
@@ -153,32 +115,16 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
         this.mScrollAnimation = scrollAnimation;
     }
 
-    public interface ViewBindListener {
-        public boolean onViewBind(RecyclerAdapter adapter, int position);
-    }
-
-    private AbstractViewHolder createViewHolderInstance(Class<? extends AbstractViewHolder> klas, View itemView) {
-        try {
-            Constructor<? extends AbstractViewHolder> ctor  = klas.getDeclaredConstructor(View.class);
-            return ctor.newInstance( itemView);
-        } catch (NoSuchMethodException x) {
-            x.printStackTrace();
-        } catch (InstantiationException x) {
-            x.printStackTrace();
-        } catch (InvocationTargetException x) {
-            x.printStackTrace();
-        } catch (IllegalAccessException x) {
-            x.printStackTrace();
-        }
-        return null;
-    }
-
     @Override
     public Filter getFilter() {
         if (this.mFilter == null) {
             this.mFilter = new AdapterFilter();
         }
         return this.mFilter;
+    }
+
+    public interface OnViewBindListener {
+        void onViewBind(RecyclerAdapter adapter, AbstractViewHolder vh, int position);
     }
 
     public class AdapterFilter extends Filter {

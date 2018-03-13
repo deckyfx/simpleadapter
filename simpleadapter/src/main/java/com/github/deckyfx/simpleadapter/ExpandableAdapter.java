@@ -4,49 +4,42 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.TranslateAnimation;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> extends BaseExpandableListAdapter implements Serializable, Filterable {
     private ExpandableAdapterDataSet<E, T> mGroupList, mBackupGroupList;
     private int mGroupLayout, mChildLayout;
     private Context mCtx;
     private Class<? extends AbstractViewHolder> mGroupViewHolderClass, mChildViewHolderClass;
-    private SimpleAdapter.ClickListener mClickListener;
-    private SimpleAdapter.TouchListener mTouchListener;
-    private ViewBindListener mViewBindListener;
+    private OnViewBindListener mItemViewBindListener;
     private Filter mFilter;
     private Object mTag;
     private int mGroupCountMargin, mChildrenCountMargin;
     private AnimationSet mGroupScrollAnimation, mChildScrollAnimation;
 
     public ExpandableAdapter(Context ctx, ExpandableAdapterDataSet<E, T> groupList) {
-        this(ctx, groupList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_EXPANDABLE_LIST_ITEM_1,
-                SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
+        this(ctx, groupList, AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_EXPANDABLE_LIST_ITEM_1,
+                AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
                 DefaultViewHolder.class,
                 DefaultViewHolder.class);
     }
 
     public ExpandableAdapter(Context ctx, ExpandableAdapterDataSet<E, T> groupList, Class<? extends AbstractViewHolder> groupViewHolderClass) {
-        this(ctx, groupList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
-                SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
+        this(ctx, groupList, AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
+                AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
                 groupViewHolderClass,
                 DefaultViewHolder.class);
     }
 
     public ExpandableAdapter(Context ctx, ExpandableAdapterDataSet<E, T> groupList, Class<? extends AbstractViewHolder> viewHolderClass,
                              Class<? extends AbstractViewHolder> childViewHolderClass) {
-        this(ctx, groupList, SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
-                SimpleAdapter.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
+        this(ctx, groupList, AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
+                AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1,
                 viewHolderClass,
                 childViewHolderClass);
     }
@@ -85,10 +78,7 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
         if (convertView == null) {
             convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(fallbackLayout, null);
         }
-        AbstractViewHolder viewHolder = this.createViewHolderInstance(vhClass, convertView);
-        if (viewHolder == null) {
-            throw new Error("Failed to initiate View Holder " + vhClass.getCanonicalName());
-        }
+        AbstractViewHolder viewHolder = AdapterUtil.createViewHolderInstance(vhClass, convertView);
         return viewHolder;
     }
 
@@ -106,20 +96,6 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
         this.mChildrenCountMargin = countMargin;
     }
 
-    public AnimationSet createDefaultScrollAnimation() {
-        AnimationSet scrollAnimation = new AnimationSet(true);
-        Animation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setDuration(800);
-        scrollAnimation.addAnimation(animation);
-        animation = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f
-        );
-        animation.setDuration(600);
-        scrollAnimation.addAnimation(animation);
-        return scrollAnimation;
-    }
-
     public AnimationSet getGroupScrollAnimation() {
         return this.mGroupScrollAnimation;
     }
@@ -134,22 +110,6 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
 
     public void setChildScrollAnimation(AnimationSet scrollAnimation) {
         this.mChildScrollAnimation = scrollAnimation;
-    }
-
-    private AbstractViewHolder createViewHolderInstance(Class<? extends AbstractViewHolder> klas, View itemView) {
-        try {
-            Constructor<? extends AbstractViewHolder> ctor  = klas.getDeclaredConstructor(View.class);
-            return ctor.newInstance( itemView);
-        } catch (NoSuchMethodException x) {
-            x.printStackTrace();
-        } catch (InstantiationException x) {
-            x.printStackTrace();
-        } catch (InvocationTargetException x) {
-            x.printStackTrace();
-        } catch (IllegalAccessException x) {
-            x.printStackTrace();
-        }
-        return null;
     }
 
     @Override
@@ -212,18 +172,12 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
                 convertView.setTag(viewHolder);
             }
         }
-        if (this.mClickListener != null) {
-            viewHolder.setOnClickListener(this.mClickListener);
-        }
-        if (this.mTouchListener != null) {
-            viewHolder.setOnTouchListener(this.mTouchListener);
-        }
         if (groupPosition < this.getGroupCount()) {
             E item = this.getGroup(groupPosition);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, groupPosition, -1, item);
-                if (this.mViewBindListener != null) {
-                    this.mViewBindListener.onViewBind(this, groupPosition, -1);
+                if (this.mItemViewBindListener != null) {
+                    this.mItemViewBindListener.onViewBind(this, viewHolder, groupPosition, -1);
                 }
             }
         }
@@ -250,18 +204,12 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
                 convertView.setTag(viewHolder);
             }
         }
-        if (this.mClickListener != null) {
-            viewHolder.setOnClickListener(this.mClickListener);
-        }
-        if (this.mTouchListener != null) {
-            viewHolder.setOnTouchListener(this.mTouchListener);
-        }
         if (groupPosition < this.getGroupCount() && childPosition < this.getChildrenCount(groupPosition)) {
             T item = this.getChild(groupPosition, childPosition);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, groupPosition, childPosition, item);
-                if (this.mViewBindListener != null) {
-                    this.mViewBindListener.onViewBind(this, groupPosition, childPosition);
+                if (this.mItemViewBindListener != null) {
+                    this.mItemViewBindListener.onViewBind(this, viewHolder, groupPosition, childPosition);
                 }
             }
         }
@@ -292,28 +240,24 @@ public class ExpandableAdapter<E extends AdapterGroupItem, T extends BaseItem> e
     @Override
     public Filter getFilter() {
         if (this.mFilter == null) {
-            this.mFilter = new ExpandableAdapterFilter();
+            this.mFilter = new AdapterFilter();
         }
         return this.mFilter;
     }
 
-    public void setOnClickListener(SimpleAdapter.ClickListener listener) {
-        this.mClickListener = listener;
-    }
-
-    public void setOnTouchListener(SimpleAdapter.TouchListener listener) {
-        this.mTouchListener = listener;
-    }
-
-    public void setOnViewBindListener(ViewBindListener listener) {
-        this.mViewBindListener = listener;
+    public void setOnItemViewBindListener(OnViewBindListener listener) {
+        this.mItemViewBindListener = listener;
     }
 
     public interface ViewBindListener {
         public boolean onViewBind(ExpandableAdapter adapter, int groupPosition, int childPosition);
     }
 
-    private class ExpandableAdapterFilter extends Filter {
+    public interface OnViewBindListener {
+        void onViewBind(ExpandableAdapter adapter, AbstractViewHolder vh, int groupPosition, int itemPosition);
+    }
+
+    private class AdapterFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             constraint = constraint.toString().toLowerCase();

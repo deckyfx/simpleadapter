@@ -2,36 +2,28 @@ package com.github.deckyfx.simpleadapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements Serializable, Filterable {
     private AdapterDataSet<E> mItemsList, mBackupList;
     private int mItemLayout;
     private Context mCtx;
     private Class mViewHolderClass;
-    private ClickListener mClickListener;
-    private TouchListener mTouchListener;
-    private ViewBindListener mViewBindListener;
+    private OnViewBindListener mItemViewBindListener;
     private Filter mFilter;
     private Object mTag;
     private int mCountMargin;
     private AnimationSet mScrollAnimation;
 
     public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList) {
-        this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
+        this(ctx, itemsList, AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
     }
 
     public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout) {
@@ -39,7 +31,7 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
     }
 
     public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, Class<? extends AbstractViewHolder<E>> viewHolderClass) {
-        this(ctx, itemsList, DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, viewHolderClass);
+        this(ctx, itemsList, AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, viewHolderClass);
     }
 
     public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, int itemLayout, AbstractViewHolder<E> viewHolderInstance) {
@@ -75,10 +67,7 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         if (convertView == null) {
             convertView = ((LayoutInflater) this.mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(fallbackLayout, null);
         }
-        AbstractViewHolder viewHolder = this.createViewHolderInstance(vhClass, convertView);
-        if (viewHolder == null) {
-            throw new Error("Failed to initiate View Holder " + vhClass.getCanonicalName());
-        }
+        AbstractViewHolder viewHolder = AdapterUtil.createViewHolderInstance(vhClass, convertView);
         return viewHolder;
     }
 
@@ -117,18 +106,12 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
                 convertView.setTag(viewHolder);
             }
         }
-        if (this.mClickListener != null) {
-            viewHolder.setOnClickListener(this.mClickListener);
-        }
-        if (this.mTouchListener != null) {
-            viewHolder.setOnTouchListener(this.mTouchListener);
-        }
         if (position < this.mItemsList.size()) {
             E item = this.mItemsList.get(position);
             if (viewHolder != null && item != null) {
                 viewHolder.setupView(this.mCtx, -1, position, item);
-                if (this.mViewBindListener != null) {
-                    this.mViewBindListener.onViewBind(this, position);
+                if (this.mItemViewBindListener != null) {
+                    this.mItemViewBindListener.onViewBind(this, viewHolder, position);
                 }
             }
         }
@@ -151,20 +134,6 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         this.mBackupList.addAll(this.mItemsList);
     }
 
-    public AnimationSet createDefaultScrollAnimation() {
-        AnimationSet scrollAnimation = new AnimationSet(true);
-        Animation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setDuration(800);
-        scrollAnimation.addAnimation(animation);
-        animation = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f
-        );
-        animation.setDuration(600);
-        scrollAnimation.addAnimation(animation);
-        return scrollAnimation;
-    }
-
     public AnimationSet getScrollAnimation() {
         return this.mScrollAnimation;
     }
@@ -181,62 +150,12 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         return this.mFilter;
     }
 
-    public void setOnClickListener(ClickListener listener) {
-        this.mClickListener = listener;
+    public void setOnItemViewBindListener(OnViewBindListener listener) {
+        this.mItemViewBindListener = listener;
     }
 
-    public void setOnTouchListener(TouchListener listener) {
-        this.mTouchListener = listener;
-    }
-
-    public void setOnViewBindListener(ViewBindListener listener) {
-        this.mViewBindListener = listener;
-    }
-
-    public interface ClickListener extends AbstractViewHolder.ClickListener {
-        @Override
-        public void onClick(View view);
-    }
-
-    public interface TouchListener extends AbstractViewHolder.TouchListener {
-        @Override
-        public boolean onTouch(View view, MotionEvent mv);
-    }
-
-    public interface ViewBindListener {
-        public boolean onViewBind(SimpleAdapter adapter, int position);
-    }
-
-    private AbstractViewHolder createViewHolderInstance(Class<? extends AbstractViewHolder> klas, View itemView) {
-        try {
-            Constructor<? extends AbstractViewHolder> ctor  = klas.getDeclaredConstructor(View.class);
-            return ctor.newInstance( itemView);
-        } catch (NoSuchMethodException x) {
-            x.printStackTrace();
-        } catch (InstantiationException x) {
-            x.printStackTrace();
-        } catch (InvocationTargetException x) {
-            x.printStackTrace();
-        } catch (IllegalAccessException x) {
-            x.printStackTrace();
-        }
-        return null;
-    }
-
-    public static final class DEFAULT_LIST_VIEW {
-        public static final int SIMPLE_LIST_ITEM_1                  = android.R.layout.simple_list_item_1;
-        public static final int SIMPLE_LIST_ITEM_2                  = android.R.layout.simple_list_item_2;
-        public static final int SIMPLE_SPINER_ITEM                  = android.R.layout.simple_spinner_item;
-        public static final int SIMPLE_DROPDOWN_ITEM_1LINE          = android.R.layout.simple_dropdown_item_1line;
-        public static final int SIMPLE_EXPANDABLE_LIST_ITEM_1       = android.R.layout.simple_expandable_list_item_1;
-        public static final int SIMPLE_EXPANDABLE_LIST_ITEM_2       = android.R.layout.simple_expandable_list_item_2;
-        public static final int SIMPLE_LIST_ITEM_ACTIVATED_1        = android.R.layout.simple_list_item_activated_1;
-        public static final int SIMPLE_LIST_ITEM_ACTIVATED_2        = android.R.layout.simple_list_item_activated_2;
-        public static final int SIMPLE_LIST_ITEM_CHECKED            = android.R.layout.simple_list_item_checked;
-        public static final int SIMPLE_LIST_ITEM_MULTIPLE_CHOICE    = android.R.layout.simple_list_item_multiple_choice;
-        public static final int SIMPLE_LIST_ITEM_SINGLE_CHOICE      = android.R.layout.simple_list_item_single_choice;
-        public static final int SIMPLE_SELECTABLE_LIST_ITEM         = android.R.layout.simple_selectable_list_item;
-        public static final int SIMPLE_SPINNER_DROPDOWN_ITEM        = android.R.layout.simple_spinner_dropdown_item;
+    public interface OnViewBindListener {
+        void onViewBind(SimpleAdapter adapter, AbstractViewHolder vh, int position);
     }
 
     public class AdapterFilter extends Filter {
