@@ -30,7 +30,7 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
         this(ctx, itemsList, itemLayout, DefaultViewHolder.class);
     }
 
-    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, Class<? extends AbstractViewHolder<E>> viewHolderClass) {
+    public SimpleAdapter(Context ctx, AdapterDataSet<E> itemsList, Class<? extends AbstractViewHolder> viewHolderClass) {
         this(ctx, itemsList, AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, viewHolderClass);
     }
 
@@ -146,7 +146,7 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
     public Filter getFilter() {
         if (this.mFilter == null) {
             this.mFilter = new AdapterFilter();
-        }    
+        }
         return this.mFilter;
     }
 
