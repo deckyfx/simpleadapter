@@ -146,7 +146,7 @@ public class SimpleAdapter<E extends BaseItem> extends ArrayAdapter implements S
     public Filter getFilter() {
         if (this.mFilter == null) {
             this.mFilter = new AdapterFilter();
-        }
+        }    
         return this.mFilter;
     }
 
