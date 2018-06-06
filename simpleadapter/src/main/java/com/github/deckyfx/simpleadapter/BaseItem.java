@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class BaseItem {
+    private static Exception JSONParserNotInitializedException = new Exception("JSONParser not yet initialized, please use setJSONParser(JSONParserAdapter parser) before serialize / unserialize JSON");
+
     private static JSONParserAdapter Parser;
 
     public static void setJSONParser(JSONParserAdapter parser) {
@@ -22,30 +24,37 @@ public class BaseItem {
     }
 
     public final <T extends BaseItem> T fromJson(String json) throws Exception {
+        if (Parser == null) throw JSONParserNotInitializedException;
         return (T) Parser.fromJson(json, this.getClass());
     }
 
     public final static <T extends BaseItem> T fromJson(String json, Class<? extends BaseItem> klas) throws Exception {
+        if (Parser == null) throw JSONParserNotInitializedException;
         return (T) Parser.fromJson(json, klas);
     }
 
     public final static <T extends BaseItem> T[] fromJsonArray(String json, Class<? extends BaseItem[]> klas) throws Exception {
+        if (Parser == null) throw JSONParserNotInitializedException;
         return (T[]) Parser.fromJsonArray(json, klas);
     }
 
     public final static <T extends BaseItem> T fromJson(String json, BaseItem obj) throws Exception {
+        if (Parser == null) throw JSONParserNotInitializedException;
         return (T) Parser.fromJson(json, obj.getClass());
     }
 
     public final static <T extends BaseItem> T[] fromJsonArray(String json, BaseItem... obj) throws Exception {
+        if (Parser == null) throw JSONParserNotInitializedException;
         return (T[]) Parser.fromJsonArray(json, obj.getClass());
     }
 
     public final String toJson() throws Exception {
+        if (Parser == null) throw JSONParserNotInitializedException;
         return Parser.toJson(this);
     }
 
     public final static String toJson(BaseItem source) throws Exception {
+        if (Parser == null) throw JSONParserNotInitializedException;
         return Parser.toJson(source);
     }
 
