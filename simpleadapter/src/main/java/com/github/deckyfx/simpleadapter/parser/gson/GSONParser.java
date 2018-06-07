@@ -17,7 +17,7 @@ public class GSONParser extends JSONParserAdapter {
     public void init() {
         this.GSON = new GsonBuilder()
                 .serializeNulls()
-                .setDateFormat("yyyy MM DD HH:mm:ss ")
+                .setDateFormat("yyyy MM DD HH:mm:ss")
                 .registerTypeAdapter(Date.class, new DateTimeSerializer())
                 .create();
     }

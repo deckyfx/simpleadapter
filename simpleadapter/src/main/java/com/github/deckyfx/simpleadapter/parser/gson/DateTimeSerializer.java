@@ -23,6 +23,7 @@ public class DateTimeSerializer implements JsonDeserializer<Date>, JsonSerialize
     private static final String[] DATE_FORMATS = new String[] {
             "yyyy-MM-dd HH:mm:ss",
             "yyyy-MM-dd",
+            "HH:mm:ss",
             "timestamp"
     };
 
