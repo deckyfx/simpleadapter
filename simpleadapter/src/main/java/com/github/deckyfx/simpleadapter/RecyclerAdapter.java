@@ -23,6 +23,7 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
     private Filter mFilter;
     private int mCountMargin;
     private AnimationSet mScrollAnimation;
+    private Object mTag;
 
     public RecyclerAdapter(Context ctx, AdapterDataSet<E> itemsList) {
         this(ctx, itemsList, AdapterUtil.DEFAULT_LIST_VIEW.SIMPLE_LIST_ITEM_1, DefaultViewHolder.class);
@@ -121,6 +122,14 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
             this.mFilter = new AdapterFilter();
         }
         return this.mFilter;
+    }
+
+    public Object getTag() {
+        return this.mTag;
+    }
+
+    public void setTag(Object tag) {
+        this.mTag = tag;
     }
 
     public interface OnViewBindListener {

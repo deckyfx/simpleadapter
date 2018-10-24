@@ -10,11 +10,11 @@ def artifactName = 'simpleadapter'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -86,8 +86,8 @@ dependencies {
 
     // NOTE: test libraries
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     // NOTE: support libraries
     provided "com.android.support:appcompat-v7:$android_support_version"
@@ -99,7 +99,7 @@ dependencies {
     provided 'com.google.code.gson:gson:2.8.2'
     provided 'com.squareup.moshi:moshi:1.5.0'
     provided 'com.fasterxml.jackson.core:jackson-databind:2.8.4'
-    provided 'com.fasterxml.jackson.core:jackson-core:2.8.4'
+    provided 'com.fasterxml.jackson.core:jackson-core:2.9.4'
     provided 'com.fasterxml.jackson.core:jackson-annotations:2.8.4'
 }
 

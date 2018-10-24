@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         applicationId "com.github.deckyfx.simpleadapterapp"
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -28,8 +28,8 @@ dependencies {
 
     // NOTE: test libraries
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     // NOTE: support libraries
     implementation "com.android.support:appcompat-v7:$android_support_version"
@@ -38,7 +38,8 @@ dependencies {
 
     implementation project(path: ':simpleadapter')
     //implementation project(path: ':simpleadapter-kotlin')
-    //implementation project(path: ':simpleadapter')implementation 'com.github.deckyfx:simpleadapter:-SNAPSHOT@aar'
+    //implementation project(path: ':simpleadapter')
+    implementation 'com.github.deckyfx:simpleadapter:-SNAPSHOT@aar'
 
     implementation 'com.google.code.gson:gson:2.8.2'
 }
