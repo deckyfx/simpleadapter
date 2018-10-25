@@ -20,6 +20,7 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
     private Context mCtx;
     private Class<? extends AbstractViewHolder> mViewHolderClass;
     private OnViewBindListener mItemViewBindListener;
+    private OnCreateViewHolderListener mCreateViewHolderListener;
     private Filter mFilter;
     private int mCountMargin;
     private AnimationSet mScrollAnimation;
@@ -53,6 +54,10 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
         this.mItemViewBindListener = listener;
     }
 
+    public void setOnCreateViewHolderListener(OnCreateViewHolderListener listener) {
+        this.mCreateViewHolderListener = listener;
+    }
+
     // Create new views (invoked by the layout manager)
     @Override
     public AbstractViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -61,6 +66,9 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
         // Inflate the custom layout
         View itemView           = inflater.inflate(this.mItemLayout, parent, false);
         AbstractViewHolder viewHolder = AdapterUtil.createViewHolderInstance(this.mViewHolderClass, itemView);
+        if (this.mCreateViewHolderListener != null) {
+            this.mCreateViewHolderListener.onCreateViewHolder(this, viewHolder, parent, viewType);
+        }
         return viewHolder;
     }
 
@@ -134,6 +142,10 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
 
     public interface OnViewBindListener {
         void onViewBind(RecyclerAdapter adapter, AbstractViewHolder vh, int position);
+    }
+
+    public interface OnCreateViewHolderListener {
+        void onCreateViewHolder(RecyclerAdapter adapter, AbstractViewHolder viewHolder, ViewGroup parent, int viewType);
     }
 
     public class AdapterFilter extends Filter {
