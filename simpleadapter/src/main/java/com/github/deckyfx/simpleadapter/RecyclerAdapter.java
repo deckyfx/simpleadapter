@@ -67,9 +67,10 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
         View itemView           = inflater.inflate(this.mItemLayout, parent, false);
         AbstractViewHolder viewHolder = AdapterUtil.createViewHolderInstance(this.mViewHolderClass, itemView);
         if (this.mCreateViewHolderListener != null) {
-            this.mCreateViewHolderListener.onCreateViewHolder(this, viewHolder, parent, viewType);
+            return this.mCreateViewHolderListener.onCreateViewHolder(this, viewHolder, parent, viewType);
+        } else {
+            return viewHolder;
         }
-        return viewHolder;
     }
 
     @Override
@@ -141,11 +142,11 @@ public class RecyclerAdapter<E extends BaseItem> extends RecyclerView.Adapter<Ab
     }
 
     public interface OnViewBindListener {
-        void onViewBind(RecyclerAdapter adapter, AbstractViewHolder vh, int position);
+        public void onViewBind(RecyclerAdapter adapter, AbstractViewHolder vh, int position);
     }
 
     public interface OnCreateViewHolderListener {
-        void onCreateViewHolder(RecyclerAdapter adapter, AbstractViewHolder viewHolder, ViewGroup parent, int viewType);
+        public AbstractViewHolder onCreateViewHolder(RecyclerAdapter adapter, AbstractViewHolder viewHolder, ViewGroup parent, int viewType);
     }
 
     public class AdapterFilter extends Filter {
