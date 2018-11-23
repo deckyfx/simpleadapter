@@ -24,7 +24,9 @@ public class DateTimeSerializer implements JsonDeserializer<Date>, JsonSerialize
             "yyyy-MM-dd HH:mm:ss",
             "yyyy-MM-dd",
             "HH:mm:ss",
-            "timestamp"
+            "timestamp",
+            "blank",
+            "null"
     };
 
     @Override
@@ -33,6 +35,20 @@ public class DateTimeSerializer implements JsonDeserializer<Date>, JsonSerialize
             if (format.equalsIgnoreCase("timestamp")) {
                 try {
                     return new Date(jsonElement.getAsLong());
+                } catch (Exception   e) {
+                }
+            } else if (format.equalsIgnoreCase("null")) {
+                try {
+                    if (jsonElement.getAsString() == null) {
+                        return null;
+                    }
+                } catch (Exception   e) {
+                }
+            } else if (format.equalsIgnoreCase("blank")) {
+                try {
+                    if (jsonElement.getAsString().length() == 0) {
+                        return null;
+                    }
                 } catch (Exception   e) {
                 }
             } else {
