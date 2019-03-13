@@ -1,8 +1,14 @@
 package com.github.deckyfx.simpleadapter;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.RandomAccess;
 
 /**
@@ -11,6 +17,14 @@ import java.util.RandomAccess;
 
 
 public class AdapterDataSet<E extends BaseItem> extends ArrayList<E> implements List<E>, RandomAccess, Cloneable, Serializable {
+    public AdapterDataSet() {
+        super();
+    }
+
+    public AdapterDataSet(Collection<? extends E> c) {
+        super(c);
+    }
+
     public AdapterDataSet<E> find(CharSequence constraint) {
         AdapterDataSet<E> results = new AdapterDataSet<E>();
         for (int i = 0; i < this.size(); i++) {

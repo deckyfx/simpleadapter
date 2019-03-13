@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList a = new ArrayList();
         ArrayList<String> b = new ArrayList<String>();
-        AdapterDataSet<TestItem> c = new AdapterDataSet<TestItem>();
+        AdapterDataSet<TestItem> c = new AdapterDataSet<TestItem>(a);
         AdapterDataSet d = new AdapterDataSet();
         c.add(new TestItem());
         d.add(new AdapterItem("A"));
